@@ -1,0 +1,344 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Berlin Wall: Interactive History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDocs, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- PASTE YOUR ACTUAL KEYS FROM FIREBASE CONSOLE HERE ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
+            authDomain: "berlin-wall-f05a8.firebaseapp.com",
+            projectId: "berlin-wall-f05a8",
+            storageBucket: "berlin-wall-f05a8.firebasestorage.app",
+            messagingSenderId: "374515847282",
+            appId: "1:374515847282:web:b052c0c218937fae7432eb"
+        };
+        // --- END KEYS ---
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+        const appId = "berlin-wall-v1";
+
+        let currentUser = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user && !user.isAnonymous) {
+                // If they are already logged in with Google, skip the login screen
+                handlePostLogin(user.displayName);
+            }
+        });
+
+        // Google Login Logic
+        window.loginWithGoogle = async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                handlePostLogin(result.user.displayName);
+            } catch (error) {
+                console.error("Google Auth Error:", error);
+                alert("Login failed. Make sure Google Sign-in is enabled in your Firebase Console.");
+            }
+        };
+
+        // Manual Name Login Logic
+        window.loginStudent = async () => {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) return;
+            if (!currentUser) await signInAnonymously(auth);
+            handlePostLogin(name);
+        };
+
+        async function handlePostLogin(name) {
+            try {
+                await setDoc(doc(db, 'lessons', appId, 'users', currentUser.uid), {
+                    displayName: name,
+                    lastActive: new Date()
+                }, { merge: true });
+
+                const q = collection(db, 'lessons', appId, 'users', currentUser.uid, 'answers');
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.questionId) markAsCompleted(data.questionId);
+                });
+
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('locked');
+                document.body.style.overflow = 'auto';
+            } catch (e) {
+                console.error("Sync error:", e);
+            }
+        }
+
+        window.submitAnswer = async (questionId, answer) => {
+            if (!currentUser) return;
+            try {
+                await addDoc(collection(db, 'lessons', appId, 'users', currentUser.uid, 'answers'), {
+                    questionId, answer, timestamp: new Date()
+                });
+                markAsCompleted(questionId);
+            } catch (e) {
+                console.error("Save failed:", e);
+            }
+        };
+
+        const markAsCompleted = (id) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerHTML = `<div class="p-4 bg-green-900/30 border border-green-500 rounded text-green-400 text-sm font-bold animate-pulse text-center">✓ Progress Saved to Cloud</div>`;
+            }
+        };
+    </script>
+    <style>
+        :root {
+            --bg: #0d0d0f;
+            --soviet: #ef4444;
+            --us: #f59e0b;
+            --uk: #22c55e;
+            --france: #3b82f6;
+            --wall: #71717a;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        .locked {
+            opacity: 0.1;
+            pointer-events: none;
+            filter: blur(20px);
+        }
+
+        .scroll-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 8%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .narrative-card {
+            background: rgba(18, 18, 22, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 2rem;
+            max-width: 550px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .visual-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 55%;
+            height: 100vh;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #main-svg {
+            width: 85%;
+            height: auto;
+            transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .visual-part {
+            opacity: 0;
+            transition: opacity 0.8s ease, transform 1s ease;
+        }
+
+        .visible {
+            opacity: 1 !important;
+        }
+
+        .btn-opt {
+            width: 100%;
+            text-align: left;
+            padding: 1.25rem;
+            margin-top: 0.75rem;
+            background: #1a1a1e;
+            border: 1px solid #2d2d33;
+            border-radius: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            color: white;
+        }
+
+            .btn-opt:hover {
+                border-color: var(--soviet);
+                background: #242429;
+                transform: translateX(5px);
+            }
+
+        .wall-line {
+            stroke: var(--wall);
+            stroke-width: 4;
+            stroke-dasharray: 8;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay" class="fixed inset-0 bg-[#0d0d0f] z-[100] flex items-center justify-center p-6 text-center">
+        <div class="bg-zinc-900 p-10 rounded-[3rem] border border-zinc-800 w-full max-w-md shadow-2xl">
+            <h1 class="text-5xl font-black mb-2 uppercase tracking-tighter text-red-600">BERLIN</h1>
+            <p class="text-zinc-500 text-xs uppercase tracking-[0.4em] mb-8 font-bold italic">Interactive Investigation</p>
+
+            <button onclick="loginWithGoogle()" class="w-full flex items-center justify-center gap-3 bg-white text-black py-4 rounded-2xl font-bold mb-6 hover:bg-zinc-200 transition-all">
+                <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+                Sign in with Google
+            </button>
+
+            <div class="flex items-center gap-4 mb-6 opacity-30">
+                <hr class="flex-grow border-zinc-500"> <span class="text-xs">OR</span> <hr class="flex-grow border-zinc-500">
+            </div>
+
+            <input type="text" id="studentName" placeholder="Enter Name Manually" class="w-full bg-zinc-800 border border-zinc-700 p-4 rounded-xl text-white mb-4 text-center outline-none focus:ring-2 focus:ring-red-600 font-bold">
+            <button onclick="loginStudent()" class="w-full bg-zinc-700 hover:bg-zinc-600 py-4 rounded-xl font-bold uppercase tracking-widest transition-all">Guest Entrance</button>
+        </div>
+    </div>
+
+    <div id="main-content" class="locked transition-all duration-1000">
+        <div class="visual-container">
+            <svg id="main-svg" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                <!-- 1. GERMANY CONTEXT -->
+                <g id="germany-map" class="visual-part">
+                    <path d="M150 50 L350 50 L380 150 L350 350 L150 350 L120 150 Z" fill="#151518" stroke="#333" stroke-width="2" />
+                    <path d="M250 50 L350 50 L380 150 L365 200 L250 200 Z" fill="var(--soviet)" opacity="0.8" />
+                    <path d="M150 50 L250 50 L250 150 L120 150 Z" fill="var(--uk)" opacity="0.6" />
+                    <path d="M120 150 L180 150 L180 350 L150 350 Z" fill="var(--france)" opacity="0.6" />
+                    <path d="M180 150 L250 150 L250 350 L180 350 Z" fill="var(--us)" opacity="0.6" />
+                </g>
+
+                <!-- 2. BERLIN SECTORS & WALL GROWTH -->
+                <g id="berlin-detail" class="visual-part" transform="translate(100, 50) scale(1.5)">
+                    <circle cx="100" cy="100" r="90" fill="#111" stroke="#333" stroke-width="1" />
+                    <path d="M100 100 L50 30 A 90 90 0 0 1 150 30 Z" fill="var(--france)" opacity="0.8" />
+                    <path d="M100 100 L150 30 A 90 90 0 0 1 150 170 Z" fill="var(--soviet)" opacity="0.8" />
+                    <path d="M100 100 L150 170 A 90 90 0 0 1 50 170 Z" fill="var(--us)" opacity="0.8" />
+                    <path d="M100 100 L50 170 A 90 90 0 0 1 50 30 Z" fill="var(--uk)" opacity="0.8" />
+                    <path id="wall-wire" d="M100 10 L100 190" class="wall-line" />
+                    <path id="wall-concrete" d="M98 5 L102 5 L102 195 L98 195 Z" fill="white" style="opacity: 0; transition: opacity 2s;" />
+                </g>
+
+                <!-- 3. CROSS SECTION -->
+                <g id="death-strip" class="visual-part" transform="translate(50, 250)">
+                    <rect x="0" y="50" width="400" height="10" fill="#222" />
+                    <rect id="outer-wall" x="50" y="0" width="8" height="50" fill="#777" opacity="0" />
+                    <rect id="inner-wall" x="350" y="0" width="8" height="50" fill="#777" opacity="0" />
+                    <rect id="sand" x="58" y="45" width="292" height="5" fill="#f59e0b" opacity="0" />
+                </g>
+            </svg>
+        </div>
+
+        <header class="scroll-section">
+            <div class="max-w-xl">
+                <h1 class="text-[10rem] font-black leading-[0.75] tracking-tighter uppercase mb-8 text-white">IRON<br><span class="text-red-600 italic text-[8rem]">CURTAIN</span></h1>
+                <p class="text-2xl text-zinc-400 font-light max-w-md">Investigation: The physical manifestation of a global ideology split.</p>
+            </div>
+        </header>
+
+        <section class="scroll-section" data-step="germany">
+            <div class="narrative-card">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-xs">Phase I: 1945</span>
+                <h2 class="text-4xl font-black mt-2 mb-6 text-white text-white">The Enclave</h2>
+                <p class="text-zinc-400 mb-8 leading-relaxed text-lg">Berlin was an island of democracy located deep inside the Soviet-controlled "Sea" of East Germany.</p>
+                <div id="q1">
+                    <button onclick="submitAnswer('q1', 'Isolated')" class="btn-opt">West Berlin was completely isolated.</button>
+                    <button onclick="submitAnswer('q1', 'Border')" class="btn-opt">West Berlin shared a West German border.</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section" data-step="wire">
+            <div class="narrative-card">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-xs">Phase II: 1961</span>
+                <h2 class="text-4xl font-black mt-2 mb-6 text-white">Barbed Wire Sunday</h2>
+                <p class="text-zinc-400 mb-8 leading-relaxed text-lg">Overnight, wire was unrolled. Families were split. The escape route was closing.</p>
+            </div>
+        </section>
+
+        <section class="scroll-section" data-step="concrete">
+            <div class="narrative-card">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-xs">Phase III: 1975</span>
+                <h2 class="text-4xl font-black mt-2 mb-6 text-white text-white">The Concrete Wall</h2>
+                <p class="text-zinc-400 mb-8 leading-relaxed text-lg">Wire became 12-foot concrete slabs. Smooth pipes on top made gripping impossible.</p>
+                <div id="q2">
+                    <button onclick="submitAnswer('q2', 'Escape')" class="btn-opt">Built to keep people from leaving East Berlin.</button>
+                    <button onclick="submitAnswer('q2', 'Invasion')" class="btn-opt">Built to stop a NATO invasion.</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-section" data-step="death">
+            <div class="narrative-card">
+                <span class="text-red-500 font-bold uppercase tracking-widest text-xs">Phase IV: Death Strip</span>
+                <h2 class="text-4xl font-black mt-2 mb-6 text-white text-white">The Death Strip</h2>
+                <p class="text-zinc-400 mb-8 leading-relaxed text-lg">Between two walls lay a "No Man's Land" of raked sand, guard dogs, and tripwire guns.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const updateVisuals = (step) => {
+            const svg = document.getElementById('main-svg');
+            const parts = {
+                germany: document.getElementById('germany-map'),
+                berlin: document.getElementById('berlin-detail'),
+                death: document.getElementById('death-strip'),
+                wire: document.getElementById('wall-wire'),
+                concrete: document.getElementById('wall-concrete')
+            };
+
+            Object.values(parts).forEach(p => p.classList.remove('visible'));
+            parts.wire.style.opacity = '0';
+            parts.concrete.style.opacity = '0';
+
+            if (step === 'germany') {
+                parts.germany.classList.add('visible');
+                svg.style.transform = 'scale(1) rotate(-2deg)';
+            } else if (step === 'wire') {
+                parts.berlin.classList.add('visible');
+                parts.wire.style.opacity = '1';
+                svg.style.transform = 'scale(1.8) translate(-10px, 0)';
+            } else if (step === 'concrete') {
+                parts.berlin.classList.add('visible');
+                parts.concrete.style.opacity = '1';
+                svg.style.transform = 'scale(2.5) translate(-20px, 10px)';
+            } else if (step === 'death') {
+                parts.death.classList.add('visible');
+                document.getElementById('outer-wall').style.opacity = '1';
+                document.getElementById('inner-wall').style.opacity = '1';
+                document.getElementById('sand').style.opacity = '1';
+                svg.style.transform = 'scale(1.2) translateY(-100px)';
+            }
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) updateVisuals(entry.target.getAttribute('data-step'));
+            });
+        }, { threshold: 0.6 });
+        document.querySelectorAll('section[data-step]').forEach(s => observer.observe(s));
+    </script>
+</body>
+</html>
