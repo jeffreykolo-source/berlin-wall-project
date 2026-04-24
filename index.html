@@ -7,88 +7,112 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
 <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        const firebaseConfig = {
-            apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
-            authDomain: "berlin-wall-f05a8.firebaseapp.com",
-            projectId: "berlin-wall-f05a8",
-            storageBucket: "berlin-wall-f05a8.firebasestorage.app",
-            messagingSenderId: "374515847282",
-            appId: "1:374515847282:web:019138043e9321af7432eb"
-        };
+       // 1. All Imports (No duplicates!)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { 
+        getAuth, 
+        signInAnonymously, 
+        signInWithPopup, 
+        GoogleAuthProvider, 
+        onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        doc, 
+        setDoc, 
+        collection, 
+        addDoc 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const lessonId = 'berlin-wall-lesson';
+    // 2. Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
+        authDomain: "berlin-wall-f05a8.firebaseapp.com",
+        projectId: "berlin-wall-f05a8",
+        storageBucket: "berlin-wall-f05a8.firebasestorage.app",
+        messagingSenderId: "374515847282",
+        appId: "1:374515847282:web:019138043e9321af7432eb"
+    };
 
-        window.appData = { user: null, db, lessonId };
+    // 3. Initialize Services
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const lessonId = 'berlin-wall-lesson';
 
-        signInAnonymously(auth).catch(e => console.error("Auth Failed", e));
+    window.appData = { user: null, db, lessonId };
 
-        onAuthStateChanged(auth, (user) => { 
-            window.appData.user = user; 
-            console.log("Firebase Connected");
-        });
+    // 4. Set up Auth State
+    signInAnonymously(auth).catch(e => console.error("Initial Auth Failed", e));
 
-     
+    onAuthStateChanged(auth, (user) => { 
+        window.appData.user = user; 
+        console.log("Firebase Connected");
+    });
 
-        window.submitAnswer = async (questionId, answer) => {
-            if (!window.appData.user) return;
-            try {
-                await addDoc(collection(db, 'artifacts', lessonId, 'users', window.appData.user.uid, 'answers'), {
-                    questionId,
-                    answer,
-                    timestamp: new Date()
-                });
-                const box = document.getElementById(questionId);
-                if (box) box.innerHTML = `<div class="p-4 bg-green-900/30 text-green-400 border border-green-500 rounded">✓ Submitted to Dashboard.</div>`;
-            } catch (err) {
-                console.error("Submit failed:", err);
-            }
-        };
-    // --- OPTION A: THE OLD WAY (Typed Name) ---
-window.loginStudent = async () => {
-    const nameInput = document.getElementById('studentName');
-    const name = nameInput ? nameInput.value.trim() : "";
-    
-    if (!name || !window.appData.user) {
-        alert("Please enter a name.");
-        return;
-    }
-
-    await setDoc(doc(db, 'artifacts', lessonId, 'users', window.appData.user.uid), {
-        displayName: name,
-        loginType: 'anonymous',
-        loginTime: new Date()
-    }, { merge: true });
-
-    document.getElementById('login-overlay').classList.add('hidden');
-    document.getElementById('main-content').classList.remove('locked');
-};
-
-// --- OPTION B: THE NEW WAY (Google Login) ---
-window.loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
+    // 5. FUNCTION: Anonymous Login (Typed Name)
+    window.loginStudent = async () => {
+        const nameInput = document.getElementById('studentName');
+        const name = nameInput ? nameInput.value.trim() : "";
         
-        await setDoc(doc(db, 'artifacts', lessonId, 'users', user.uid), {
-            displayName: user.displayName,
-            email: user.email,
-            loginType: 'google',
-            loginTime: new Date()
-        }, { merge: true });
+        if (!name || !window.appData.user) {
+            alert("Please enter a name.");
+            return;
+        }
 
-        document.getElementById('login-overlay').classList.add('hidden');
-        document.getElementById('main-content').classList.remove('locked');
-    } catch (error) {
-        console.error("Google Login Error:", error);
-        alert("Google Login failed. You can still enter your name below to start.");
-    }
-};
+        try {
+            await setDoc(doc(db, 'artifacts', lessonId, 'users', window.appData.user.uid), {
+                displayName: name,
+                loginType: 'anonymous',
+                loginTime: new Date()
+            }, { merge: true });
+
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('locked');
+            document.body.style.overflow = 'auto';
+        } catch (err) {
+            console.error("Login failed:", err);
+        }
+    };
+
+    // 6. FUNCTION: Google Login
+    window.loginWithGoogle = async () => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            await setDoc(doc(db, 'artifacts', lessonId, 'users', user.uid), {
+                displayName: user.displayName,
+                email: user.email,
+                loginType: 'google',
+                loginTime: new Date()
+            }, { merge: true });
+
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('locked');
+            document.body.style.overflow = 'auto';
+        } catch (error) {
+            console.error("Google Login Error:", error);
+            alert("Google Login failed. You can still enter your name below.");
+        }
+    };
+
+    // 7. FUNCTION: Submit Answers
+    window.submitAnswer = async (questionId, answer) => {
+        if (!window.appData.user) return;
+        try {
+            await addDoc(collection(db, 'artifacts', lessonId, 'users', window.appData.user.uid, 'answers'), {
+                questionId,
+                answer,
+                timestamp: new Date()
+            });
+            const box = document.getElementById(questionId);
+            if (box) box.innerHTML = `<div class="p-4 bg-green-900/30 text-green-400 border border-green-500 rounded">✓ Submitted to Dashboard.</div>`;
+        } catch (err) {
+            console.error("Submit failed:", err);
+        }
+    };
     </script>
 </head>
 <body>
