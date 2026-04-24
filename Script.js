@@ -24,3 +24,21 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.5 });
 document.querySelectorAll('section[data-step]').forEach(s => observer.observe(s));
+window.loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        // This gets the user's name automatically!
+        const name = result.user.displayName; 
+        
+        await setDoc(doc(db, 'artifacts', lessonId, 'users', result.user.uid), {
+            displayName: name,
+            loginTime: new Date()
+        }, { merge: true });
+
+        document.getElementById('login-overlay').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('locked');
+    } catch (error) {
+        console.error("Google Login Failed", error);
+    }
+};
