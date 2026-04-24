@@ -8,10 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         const firebaseConfig = {
             apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
             authDomain: "berlin-wall-f05a8.firebaseapp.com",
@@ -35,28 +32,7 @@
             console.log("Firebase Connected");
         });
 
-        window.loginStudent = async () => {
-            const nameEl = document.getElementById('studentName');
-            const name = nameEl ? nameEl.value.trim() : "";
-            
-            if (!name || !window.appData.user) {
-                alert("Please enter your name.");
-                return;
-            }
-
-            try {
-                await setDoc(doc(db, 'artifacts', lessonId, 'users', window.appData.user.uid), {
-                    displayName: name,
-                    loginTime: new Date()
-                }, { merge: true });
-
-                document.getElementById('login-overlay').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('locked');
-                document.body.style.overflow = 'auto';
-            } catch (err) {
-                console.error("Login failed:", err);
-            }
-        };
+     
 
         window.submitAnswer = async (questionId, answer) => {
             if (!window.appData.user) return;
