@@ -6,13 +6,11 @@
     <title>The Berlin Wall: Interactive History</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module">
-        // 1. Correct Imports (Only one of each!)
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // 2. Your Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
             authDomain: "berlin-wall-f05a8.firebaseapp.com",
@@ -22,64 +20,55 @@
             appId: "1:374515847282:web:019138043e9321af7432eb"
         };
 
-        // 3. Initialize Firebase (Only once!)
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const appId = 'berlin-wall-lesson';
+        const lessonId = 'berlin-wall-lesson';
 
-        // 4. Global Data Storage
-        window.appData = { user: null, db, appId };
+        window.appData = { user: null, db, lessonId };
 
-        // 5. Auth Logic
-        const initAuth = async () => {
-            try {
-                await signInAnonymously(auth);
-            } catch (e) { console.error("Firebase Auth failed", e); }
-        };
-        initAuth();
+        signInAnonymously(auth).catch(e => console.error("Auth Failed", e));
 
-        onAuthStateChanged(auth, (user) => { window.appData.user = user; });
+        onAuthStateChanged(auth, (user) => { 
+            window.appData.user = user; 
+            console.log("Firebase Connected");
+        });
 
-        // 6. Student Login Function
         window.loginStudent = async () => {
-            const nameInput = document.getElementById('studentName');
-            if (!nameInput) return;
-            const name = nameInput.value.trim();
+            const nameEl = document.getElementById('studentName');
+            const name = nameEl ? nameEl.value.trim() : "";
             
             if (!name || !window.appData.user) {
-                alert("Please enter a name and wait for connection.");
+                alert("Please enter your name.");
                 return;
             }
 
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'users', window.appData.user.uid, 'profile', 'info'), {
-                    displayName: name, 
+                await setDoc(doc(db, 'artifacts', lessonId, 'users', window.appData.user.uid), {
+                    displayName: name,
                     loginTime: new Date()
-                });
+                }, { merge: true });
+
                 document.getElementById('login-overlay').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('locked');
                 document.body.style.overflow = 'auto';
-            } catch (error) {
-                console.error("Login Error:", error);
+            } catch (err) {
+                console.error("Login failed:", err);
             }
         };
 
-        // 7. Submit Answer Function
         window.submitAnswer = async (questionId, answer) => {
             if (!window.appData.user) return;
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'users', window.appData.user.uid, 'answers'), {
-                    questionId, 
-                    answer, 
+                await addDoc(collection(db, 'artifacts', lessonId, 'users', window.appData.user.uid, 'answers'), {
+                    questionId,
+                    answer,
                     timestamp: new Date()
-                });https://github.com/jeffreykolo-source/berlin-wall-project/blob/master/index.html
-                const container = document.getElementById(questionId);
-                if (container) {
-                    container.innerHTML = `<div class="p-4 bg-green-900/30 border border-green-500 rounded text-green-400 text-sm font-bold animate-pulse">✓ Correct. Entry logged in Teacher Dashboard.</div>`;
-                }
-            } catch (error) {
-                console.error("Submit Error:", error);
+                });
+                const box = document.getElementById(questionId);
+                if (box) box.innerHTML = `<div class="p-4 bg-green-900/30 text-green-400 border border-green-500 rounded">✓ Submitted to Dashboard.</div>`;
+            } catch (err) {
+                console.error("Submit failed:", err);
             }
         };
     </script>
