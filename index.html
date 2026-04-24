@@ -72,6 +72,47 @@
                 console.error("Submit failed:", err);
             }
         };
+    // --- OPTION A: THE OLD WAY (Typed Name) ---
+window.loginStudent = async () => {
+    const nameInput = document.getElementById('studentName');
+    const name = nameInput ? nameInput.value.trim() : "";
+    
+    if (!name || !window.appData.user) {
+        alert("Please enter a name.");
+        return;
+    }
+
+    await setDoc(doc(db, 'artifacts', lessonId, 'users', window.appData.user.uid), {
+        displayName: name,
+        loginType: 'anonymous',
+        loginTime: new Date()
+    }, { merge: true });
+
+    document.getElementById('login-overlay').classList.add('hidden');
+    document.getElementById('main-content').classList.remove('locked');
+};
+
+// --- OPTION B: THE NEW WAY (Google Login) ---
+window.loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        
+        await setDoc(doc(db, 'artifacts', lessonId, 'users', user.uid), {
+            displayName: user.displayName,
+            email: user.email,
+            loginType: 'google',
+            loginTime: new Date()
+        }, { merge: true });
+
+        document.getElementById('login-overlay').classList.add('hidden');
+        document.getElementById('main-content').classList.remove('locked');
+    } catch (error) {
+        console.error("Google Login Error:", error);
+        alert("Google Login failed. You can still enter your name below to start.");
+    }
+};
     </script>
 </head>
 <body>
