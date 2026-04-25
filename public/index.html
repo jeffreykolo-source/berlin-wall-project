@@ -105,26 +105,51 @@ const firebaseConfig = {
                 });
         }
 
-        function checkSection(currentNum, answers, nextId) {
-            let val = document.getElementById(`s${currentNum}-q1`).value.toLowerCase().trim();
-            if(answers.includes(val)) {
-                document.getElementById(`s${currentNum}-q1`).classList.add('correct');
-                const nextSeg = document.getElementById(nextId);
-                
-                if(nextSeg) {
-                    nextSeg.classList.remove('hidden');
-                    document.getElementById('mainBody').style.overflow = "auto";
-                    nextSeg.scrollIntoView({ behavior: 'smooth' });
-                    // Lock scrolling again after 1 second so they stay in new section
-                    setTimeout(() => { document.getElementById('mainBody').style.overflow = "hidden"; }, 1000);
-                } else {
-                    alert("Correct! Archive updated. Stay tuned for further files.");
-                }
-            } else {
-                document.getElementById(`s${currentNum}-q1`).classList.add('error');
-                setTimeout(() => document.getElementById(`s${currentNum}-q1`).classList.remove('error'), 500);
-            }
+        
+       function checkSection(currentNum, answers, nextId) {
+    // 1. Get the user's input
+    let val = document.getElementById(`s${currentNum}-q1`).value.toLowerCase().trim();
+    
+    // 2. Check if the answer is in your list of correct answers
+    if(answers.includes(val)) {
+        
+        // --- DATABASE LOGGING START ---
+        if(firebase.auth().currentUser) {
+            const userEmail = firebase.auth().currentUser.email;
+            
+            // This sends the progress to your Firestore Gradebook
+            db.collection("student_progress").doc(userEmail).set({
+                email: userEmail,
+                lastCompleted: currentNum,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
         }
+        // --- DATABASE LOGGING END ---
+
+        // 3. EXISTING CODE: This handles the visuals
+        document.getElementById(`s${currentNum}-q1`).classList.add('correct');
+        const nextSeg = document.getElementById(nextId);
+        
+        if(nextSeg) {
+            nextSeg.classList.remove('hidden'); // Show the next part
+            document.getElementById('mainBody').style.overflow = "auto"; // Unlock scroll
+            nextSeg.scrollIntoView({ behavior: 'smooth' }); // Slide down
+            
+            // Re-lock the screen after 1 second so they stay on the new section
+            setTimeout(() => { 
+                document.getElementById('mainBody').style.overflow = "hidden"; 
+            }, 1000);
+        } else {
+            alert("Archive Section Complete! Great work, Agent.");
+        }
+    } else {
+        // Handle wrong answers
+        document.getElementById(`s${currentNum}-q1`).classList.add('error');
+        setTimeout(() => {
+            document.getElementById(`s${currentNum}-q1`).classList.remove('error');
+        }, 500);
+    }
+}
     </script>
 </body>
 </html>
