@@ -25,11 +25,13 @@
         button { padding: 12px 24px; cursor: pointer; background: #d9534f; color: white; border: none; font-weight: bold; font-family: 'Courier New'; transition: 0.3s; }
         button:hover { background: #c9302c; transform: scale(1.05); }
         .correct { border: 3px solid #28a745 !important; background: #d4edda; }
-        .error { border: 3px solid #dc3545 !important; animation: shake 0.2s ease-in-out 0s 2; }
-
+        .error { border: 3px solid #dc3545 !important; animation: shake 0.2s ease-in-out 0s 2;          }
+     .hidden { display: none !important; }
+        
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(5px);} 75% {transform: translateX(-5px);} }
         .hidden { display: none; }
         img { max-width: 100%; border: 1px solid #000; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
+        
     </style>
 </head>
 <body id="mainBody">
