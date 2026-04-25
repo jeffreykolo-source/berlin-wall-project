@@ -3,67 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <title>Berlin Wall Investigation</title>
+    <title>Berlin Wall: Digital Investigation</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Courier New', Courier, monospace; background: #1a1a1a; color: #fff; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Courier New', Courier, monospace; background: #1a1a1a; color: #fff; overflow: hidden; scroll-behavior: smooth; }
         
-        /* Layout for History Segments */
+        /* Layout Grid */
         .segment { display: grid; grid-template-columns: 6fr 4fr; height: 100vh; width: 100vw; border-bottom: 5px solid #333; background: #fff; color: #333; }
-        
-        .content-left { padding: 50px; overflow-y: auto; font-size: 1.1rem; line-height: 1.6; }
-        .interactive-right { background: #f0f0f0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; border-left: 2px solid #ccc; }
+        .content-left { padding: 60px; overflow-y: auto; font-size: 1.15rem; line-height: 1.7; }
+        .interactive-right { background: #f0f0f0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; border-left: 2px solid #ccc; }
 
-        /* Login Screen Styles */
-        #login-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #2c3e50; color: white; text-align: center; position: relative; z-index: 10; }
+        /* Login Screen */
+        #login-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #2c3e50; color: white; text-align: center; }
+        .login-box { background: rgba(0,0,0,0.6); padding: 40px; border-radius: 15px; border: 1px solid #555; }
 
-        /* Input Styling */
-        input { padding: 10px; margin: 10px; border: 2px solid #333; border-radius: 4px; width: 80%; }
-        button { padding: 10px 20px; cursor: pointer; background: #d9534f; color: white; border: none; font-weight: bold; }
+        /* UI Elements */
+        input { padding: 12px; margin: 10px; border: 2px solid #333; border-radius: 4px; width: 250px; font-size: 1rem; }
+        button { padding: 12px 24px; cursor: pointer; background: #d9534f; color: white; border: none; font-weight: bold; font-family: 'Courier New'; transition: 0.3s; }
+        button:hover { background: #c9302c; transform: scale(1.05); }
         .correct { border: 3px solid #28a745 !important; background: #d4edda; }
         .error { border: 3px solid #dc3545 !important; animation: shake 0.2s ease-in-out 0s 2; }
 
         @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(5px);} 75% {transform: translateX(-5px);} }
         .hidden { display: none; }
+        img { max-width: 100%; border: 1px solid #000; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body id="mainBody">
 
     <div id="login-screen">
-        <h1>TOP SECRET: STASI ARCHIVE</h1>
-        <p>Berlin Wall Educational Investigation Phase 1.0</p>
-        <div style="background: rgba(0,0,0,0.5); padding: 30px; border-radius: 10px;">
-            <input type="password" id="passkey" placeholder="ENTER ACCESS CODE">
-            <br>
-            <button onclick="login()">DECRYPT ARCHIVE</button>
+        <div class="login-box">
+            <h1>STASI ARCHIVE ACCESS</h1>
+            <p>Classified Educational Material - Authorized Personnel Only</p>
+            <hr style="width:50%; margin: 20px auto;">
+            <button onclick="loginWithGoogle()" style="background: #4285F4; display: flex; align-items: center; gap: 10px; margin: 0 auto;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20" style="background:white; border:none; box-shadow:none;">
+                SIGN IN WITH SCHOOL GOOGLE ACCOUNT
+            </button>
         </div>
     </div>
 
     <div id="segment-1" class="segment hidden">
         <div class="content-left">
-            <h2>01: The Origins & The Berlin Airlift</h2>
-            <p>After WWII, Germany was divided into four occupation zones. Berlin, the capital, sat 100 miles deep in the Soviet zone, but was also split...</p>
-            <p>In 1948, Stalin tried to cut off the city. The West responded with the greatest humanitarian flight in history.</p>
+            <h2>FILE 01: The Post-War Partition</h2>
+            <p>In 1945, the dust settled on a broken Germany. The Allies—the US, UK, France, and USSR—didn't just share a victory; they shared the land. Germany was split into four zones.</p>
+            <p><strong>The Berlin Paradox:</strong> Berlin was the ultimate prize. Despite being 100 miles deep within the Soviet-controlled East, the city itself was split into four sectors. This created an island of democracy in a sea of communism.</p>
         </div>
         <div class="interactive-right">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d8/BerlinAirliftChart.png" style="width:100%; margin-bottom:20px; border:1px solid #000;">
-            <div style="background: white; padding: 20px; border: 1px solid #ccc;">
-                <p><strong>Validation:</strong> How many allied nations occupied Germany?</p>
-                <input type="text" id="s1-q1" placeholder="Answer here...">
-                <button onclick="checkSection(1, ['4', 'four'])">Verify & Unlock Next</button>
-            </div>
+            <h3>Knowledge Check</h3>
+            <p>How many Allied nations occupied Germany?</p>
+            <input type="text" id="s1-q1" placeholder="Enter number...">
+            <button onclick="checkSection(1, ['4', 'four'], 'segment-2')">AUTHENTICATE</button>
+        </div>
+    </div>
+
+    <div id="segment-2" class="segment hidden">
+        <div class="content-left" style="background: #fdfaf0;">
+            <h2>FILE 02: Operation Little Vittles</h2>
+            <p>When the Soviets blocked all land routes into West Berlin in 1948, the city faced starvation. The West responded with the Berlin Airlift.</p>
+            <p>Lieutenant Gail Halvorsen noticed the children of Berlin had nothing. He began dropping candy attached to tiny parachutes. He would wiggle his plane's wings so children knew the "Candy Bomber" had arrived.</p>
+        </div>
+        <div class="interactive-right">
+            <h3>Investigation Question</h3>
+            <p>What did Halvorsen wiggle to signal the children?</p>
+            <input type="text" id="s2-q1" placeholder="The _____">
+            <button onclick="checkSection(2, ['wings'], 'segment-3')">AUTHENTICATE</button>
         </div>
     </div>
 
     <script>
-
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+        // --- PASTE YOUR CONFIG HERE ---
 const firebaseConfig = {
   apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
   authDomain: "berlin-wall-f05a8.firebaseapp.com",
@@ -72,45 +84,43 @@ const firebaseConfig = {
   messagingSenderId: "374515847282",
   appId: "1:374515847282:web:b052c0c218937fae7432eb"
 };
+        // ------------------------------
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-        function login() {
-            const pass = document.getElementById('passkey').value;
-            if(pass.toLowerCase() === "berlin") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('segment-1').classList.remove('hidden');
-                // We keep overflow hidden so they can't scroll past segment 1
-                alert("ACCESS GRANTED: Section 1 Decrypted.");
-            } else {
-                document.getElementById('passkey').classList.add('error');
-                setTimeout(() => document.getElementById('passkey').classList.remove('error'), 500);
-            }
-        }
+        firebase.initializeApp(firebaseConfig);
+        const provider = new firebase.auth.GoogleAuthProvider();
+        let currentUser = null;
 
         function loginWithGoogle() {
-    firebase.auth().signInWithPopup(provider)
-      .then((result) => {
-        const user = result.user;
-        console.log("Logged in as:", user.email);
-        
-        // Success! Hide login and show Section 1
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('segment-1').classList.remove('hidden');
-        alert("Authenticated as: " + user.email);
-      }).catch((error) => {
-        alert("Login failed: " + error.message);
-      });
-  }
-        function checkSection(num, answers) {
-            let val = document.getElementById(`s${num}-q1`).value.toLowerCase().trim();
+            firebase.auth().signInWithPopup(provider)
+                .then((result) => {
+                    currentUser = result.user;
+                    console.log("Logged in as:", currentUser.email);
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('segment-1').classList.remove('hidden');
+                    alert("Welcome, Agent " + currentUser.email);
+                }).catch((error) => {
+                    alert("Login failed: " + error.message);
+                });
+        }
+
+        function checkSection(currentNum, answers, nextId) {
+            let val = document.getElementById(`s${currentNum}-q1`).value.toLowerCase().trim();
             if(answers.includes(val)) {
-                document.getElementById(`s${num}-q1`).classList.add('correct');
-                document.getElementById('mainBody').style.overflow = "auto";
-                alert("SECTION COMPLETE: Scrolling enabled.");
-                // Here is where you'd add the next segment's HTML 
+                document.getElementById(`s${currentNum}-q1`).classList.add('correct');
+                const nextSeg = document.getElementById(nextId);
+                
+                if(nextSeg) {
+                    nextSeg.classList.remove('hidden');
+                    document.getElementById('mainBody').style.overflow = "auto";
+                    nextSeg.scrollIntoView({ behavior: 'smooth' });
+                    // Lock scrolling again after 1 second so they stay in new section
+                    setTimeout(() => { document.getElementById('mainBody').style.overflow = "hidden"; }, 1000);
+                } else {
+                    alert("Correct! Archive updated. Stay tuned for further files.");
+                }
             } else {
-                document.getElementById(`s${num}-q1`).classList.add('error');
+                document.getElementById(`s${currentNum}-q1`).classList.add('error');
+                setTimeout(() => document.getElementById(`s${currentNum}-q1`).classList.remove('error'), 500);
             }
         }
     </script>
