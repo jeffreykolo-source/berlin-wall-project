@@ -39,31 +39,37 @@ body, html {
     width: 40%;
     display: flex;
     flex-direction: column;
-    background: #f4f4f4;
-    border-left: 2px solid #333;
+    height: 100vh;
+    border-left: 3px solid #222;
+    background: #1a1a1a; /* Darker theme for the right side */
 }
-
+        
 .evidence-viewer {
-    height: 60%; /* Image gets the top 60% of the right side */
+    flex: 1; /* Equal weight */
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #2c3e50;
-    padding: 20px;
+    overflow: hidden;
+    padding: 5px; /* Minimal padding to make image larger */
+    background: #000; /* Black background helps the map stand out */
 }
-
+        
 .evidence-viewer img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Fills as much as possible without distorting */
 }
 
 .question-box {
-    height: 40%; /* Questions get the bottom 40% */
-    padding: 20px;
-    background: #eee;
-    border-top: 4px solid #d9534f;
-    overflow-y: auto;
+    flex: 1; /* Equal weight */
+    padding: 25px;
+    background: #f8f9fa;
+    border-top: 5px solid #d9534f;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centers question vertically in its box */
+    box-sizing: border-box;
+    position: relative; /* Necessary for the counter positioning */
 }
         
 input[type="text"] {
@@ -134,8 +140,10 @@ input[type="text"] {
         </div>
 
         <div class="question-box">
-    <div class="counter" id="s1-counter">Question: 1 / 6</div>
-    
+<div id="s1-counter" style="position: absolute; top: 15px; right: 20px; font-family: monospace; color: #d9534f; font-weight: bold; font-size: 1.1rem;">
+        01 / 06
+    </div>
+            
     <div id="s1-q1-container">
         <p>Germany was divided into how many occupation zones?</p>
         <input type="text" id="s1-q1" placeholder="Enter number..." onkeyup="if(event.key==='Enter') checkStep(1, 1, ['4', 'four'], 2)">
@@ -297,6 +305,7 @@ function checkStep(segNum, qNum, answers, nextStep) {
         setTimeout(() => {
             if (typeof nextStep === 'number') {
                 // ADVANCE TO NEXT QUESTION IN SAME BOX
+                 let input = document.getElementById(`s${segNum}-q${qNum}`);
                 document.getElementById(`s${segNum}-q${qNum}-container`).classList.add('hidden');
                 document.getElementById(`s${segNum}-q${nextStep}-container`).classList.remove('hidden');
                 document.getElementById(`s${segNum}-counter`).innerText = `Question: ${nextStep} / 2`; // Update total count accordingly
