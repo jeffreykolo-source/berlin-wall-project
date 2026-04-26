@@ -19,51 +19,59 @@ body, html {
     overflow-x: hidden; /* Prevent side-scrolling */
 }        
         /* Layout Grid */
+/* 1. The Main Container - Force it to be exactly the screen size */
 .segment {
     display: grid;
-    grid-template-columns: 60% 40%; /* 60/40 Split */
-    height: 100vh; /* Exactly one screen tall */
-    width: 100vw;
-    border-bottom: 4px solid #222;
-}       
+    grid-template-columns: 60% 40%; 
+    height: 100vh; /* This is the 'Master Key' - 100% of viewport height */
+    overflow: hidden;
+}   
 /* Left Column: Scrolling Text */
 .content-left {
     padding: 40px;
-    overflow-y: auto; /* Scroll if text is long */
-    background: #ffffff;
-}        
+    overflow-y: auto;
+    background: #fff;
+}      
 .interactive-right {
     display: flex;
-    flex-direction: column; /* Stack image on top of box */
-    height: 100vh;
-    border-left: 2px solid #ddd;
-    background: #f4f4f4;
+    flex-direction: column;
+    height: 100vh; 
+    border-left: 2px solid #333;
 }
 .evidence-viewer {
-    flex: 1; /* Grows to take up all top space */
+    flex: 1; /* Takes up the remaining top space */
+    background: #1a1a1a; /* Dark museum background */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    background: #2c3e50; /* Darker background makes images pop */
+    padding: 10px;
+    min-height: 0; /* Important for flexbox shrink */
 }
-        
+
 .evidence-viewer img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* Prevents stretching */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    max-width: 90%;
+    max-height: 90%; /* Forces image to stay inside the top box */
+    object-fit: contain;
+    border: 1px solid #444;
+}
+
+/* 5. The Question Box - Make it a compact 'footer' */
+.question-box {
+    height: 200px; /* Reduced from 300px to keep it slim */
+    background: #f8f9fa;
+    padding: 20px;
+    border-top: 3px solid #d9534f;
+    box-sizing: border-box;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    border: 2px solid #ccc;
+    background: #fff;
 }
         
-/* Question Box locks to the bottom */
-/* Bottom Right: The Question Box */
-.question-box {
-    height: 300px; /* Fixed height so it stays consistent */
-    padding: 25px;
-    background: #e9ecef;
-    border-top: 5px solid #d9534f;
-    box-sizing: border-box; /* Includes padding in the 300px height */
-}
 .counter {
     position: absolute;
     top: 10px;
