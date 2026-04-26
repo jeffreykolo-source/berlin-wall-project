@@ -11,7 +11,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <style>
-/* Ensure the whole page allows the segments to stack */
 /* --- GLOBAL RESET & FONTS --- */
 * {
     box-sizing: border-box;
@@ -22,36 +21,16 @@ body, html {
     padding: 0;
     height: 100%;
     width: 100%;
-    font-family: 'Courier New', Courier, monospace;
-    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #e5e5e5; /* Subtle background behind the panels */
     overflow: hidden; /* Keeps the whole page from scrolling */
 }
-.main-assignment-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #d9534f; /* The Red */
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.4rem;
-    letter-spacing: 2px;
-    z-index: 2000; /* Stays above everything, even login */
-    box-shadow: 0 4px 0px #b8860b; /* The Gold Shadow (Solid bar style) */
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-        
+
 /* --- THE MAIN SEGMENT CONTAINER --- */
 .segment {
     display: flex;
     width: 100vw;
-    height: calc(100vh - 60px); /* Subtracts header height */
-    margin-top: 60px;
+    height: 100vh;
     padding: 20px;
     gap: 20px;
     box-sizing: border-box;
@@ -102,7 +81,7 @@ body, html {
 .evidence-viewer img {
     max-width: 100%;
     max-height: 100%;
-    /*object-fit: contain;
+    object-fit: contain;
 }
 
 /* --- BOTTOM RIGHT: QUESTION BOX --- */
@@ -181,7 +160,7 @@ input.error {
     border-radius: 20px;
     text-align: center;
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
+} 
     </style>
 </head>
 <body id="mainBody">
