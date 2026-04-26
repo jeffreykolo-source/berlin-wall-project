@@ -27,12 +27,31 @@ body, html {
     background-color: #e5e5e5; /* Subtle background behind the panels */
     overflow: hidden; /* Keeps the whole page from scrolling */
 }
-
+.main-assignment-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #d9534f; /* The Red */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    z-index: 2000; /* Stays above everything, even login */
+    box-shadow: 0 4px 0px #b8860b; /* The Gold Shadow (Solid bar style) */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+        
 /* --- THE MAIN SEGMENT CONTAINER --- */
 .segment {
     display: flex;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 60px); /* Subtracts header height */
+    margin-top: 60px;
     padding: 20px;
     gap: 20px;
     box-sizing: border-box;
@@ -166,7 +185,10 @@ input.error {
     </style>
 </head>
 <body id="mainBody">
-
+<header class="main-assignment-header">
+    THE BERLIN WALL: FROM CONSTRUCTION TO REUNIFICATION
+</header>
+    
     <div id="login-screen">
         <div class="login-box">
             <h1>STASI ARCHIVE ACCESS</h1>
