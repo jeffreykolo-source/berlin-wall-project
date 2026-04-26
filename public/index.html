@@ -92,6 +92,10 @@ const firebaseConfig = {
         const provider = new firebase.auth.GoogleAuthProvider();
         let currentUser = null;
 
+// 3. DEFINE THE VARIABLES (This is what is missing!)
+
+  const db = firebase.firestore(); // <--- ADD THIS LINE HERE
+        
         function loginWithGoogle() {
             firebase.auth().signInWithPopup(provider)
                 .then((result) => {
