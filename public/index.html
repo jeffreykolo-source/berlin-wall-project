@@ -21,49 +21,51 @@ body, html {
         /* Layout Grid */
 /* 1. The Main Container - Force it to be exactly the screen size */
 .segment {
-    display: grid;
-    grid-template-columns: 60% 40%; 
-    height: 100vh; /* This is the 'Master Key' - 100% of viewport height */
+    display: flex; /* Changed from grid to flex for better control */
+    height: 100vh;
+    width: 100vw;
     overflow: hidden;
-}   
-/* Left Column: Scrolling Text */
+    border-bottom: 5px solid #222;
+}
+
 .content-left {
+    width: 60%;
     padding: 40px;
-    overflow-y: auto;
-    background: #fff;
-}      
+    overflow-y: auto; /* Only the text scrolls */
+    background: white;
+}
+
 .interactive-right {
+    width: 40%;
     display: flex;
     flex-direction: column;
-    height: 100vh; 
+    background: #f4f4f4;
     border-left: 2px solid #333;
 }
+
 .evidence-viewer {
-    flex: 1; /* Takes up the remaining top space */
-    background: #1a1a1a; /* Dark museum background */
+    height: 60%; /* Image gets the top 60% of the right side */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
-    min-height: 0; /* Important for flexbox shrink */
+    background: #2c3e50;
+    padding: 20px;
 }
 
 .evidence-viewer img {
-    max-width: 90%;
-    max-height: 90%; /* Forces image to stay inside the top box */
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
-    border: 1px solid #444;
 }
 
-/* 5. The Question Box - Make it a compact 'footer' */
 .question-box {
-    height: 200px; /* Reduced from 300px to keep it slim */
-    background: #f8f9fa;
+    height: 40%; /* Questions get the bottom 40% */
     padding: 20px;
-    border-top: 3px solid #d9534f;
-    box-sizing: border-box;
+    background: #eee;
+    border-top: 4px solid #d9534f;
+    overflow-y: auto;
 }
-
+        
 input[type="text"] {
     width: 100%;
     padding: 10px;
@@ -164,6 +166,7 @@ input[type="text"] {
         <input type="text" id="s1-q6" placeholder="One word..." onkeyup="if(event.key==='Enter') checkStep(1, 6, ['surrounded'], 'segment-2')">
     </div>
 </div>    
+    </div>
     <div id="segment-2" class="segment hidden">
         <div class="content-left" style="background: #fdfaf0;">
             <h2>FILE 02: Operation Little Vittles</h2>
