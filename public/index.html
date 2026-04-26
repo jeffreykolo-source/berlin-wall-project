@@ -98,21 +98,37 @@
         const provider = new firebase.auth.GoogleAuthProvider();
         let currentUser = null;
 
-// 3. DEFINE THE VARIABLES (This is what is missing!)
-
-        
-        function loginWithGoogle() {
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    currentUser = result.user;
-                    console.log("Logged in as:", currentUser.email);
-                    document.getElementById('login-screen').classList.add('hidden');
+function loginWithGoogle() {
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            currentUser = result.user;
+            document.getElementById('login-screen').classList.add('hidden');
+            
+            // --- AUTO-RESUME LOGIC ---
+            db.collection("student_progress").doc(currentUser.email).get().then((doc) => {
+                if (doc.exists) {
+                    const lastSection = doc.data().lastCompleted;
+                    // Unlock everything up to the section they finished
+                    for (let i = 1; i <= lastSection; i++) {
+                        document.getElementById(`segment-${i}`).classList.remove('hidden');
+                    }
+                    // Scroll them to the last section they were working on
+                    const nextSection = document.getElementById(`segment-${lastSection + 1}`);
+                    if (nextSection) {
+                        nextSection.classList.remove('hidden');
+                        nextSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    // New student? Just show Section 1
                     document.getElementById('segment-1').classList.remove('hidden');
-                    alert("Welcome, Agent " + currentUser.email);
-                }).catch((error) => {
-                    alert("Login failed: " + error.message);
-                });
-        }
+                }
+            });
+            // -------------------------
+
+        }).catch((error) => {
+            alert("Login failed: " + error.message);
+        });
+}
 
         
        function checkSection(currentNum, answers, nextId) {
