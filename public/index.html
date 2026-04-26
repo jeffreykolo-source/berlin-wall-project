@@ -79,7 +79,6 @@
     <script>
         // --- PASTE YOUR CONFIG HERE ---
 
-  const db = firebase.firestore(); // <--- ADD THIS LINE HERE
         
         const firebaseConfig = {
   apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
@@ -92,6 +91,8 @@
         // ------------------------------
 
         firebase.initializeApp(firebaseConfig);
+        
+  const db = firebase.firestore(); // <--- ADD THIS LINE HERE
         const provider = new firebase.auth.GoogleAuthProvider();
         let currentUser = null;
 
