@@ -14,10 +14,53 @@
         body, html { margin: 0; padding: 0; height: 100%; font-family: 'Courier New', Courier, monospace; background: #1a1a1a; color: #fff; overflow: hidden; scroll-behavior: smooth; }
         
         /* Layout Grid */
-        .segment { display: grid; grid-template-columns: 6fr 4fr; height: 100vh; width: 100vw; border-bottom: 5px solid #333; background: #fff; color: #333; }
+.segment { 
+    display: grid; 
+    grid-template-columns: 6fr 4fr; 
+    height: 100vh; 
+    width: 100vw; 
+    border-bottom: 5px solid #333; 
+    background: #fff; 
+}
         .content-left { padding: 60px; overflow-y: auto; font-size: 1.15rem; line-height: 1.7; }
-        .interactive-right { background: #f0f0f0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; border-left: 2px solid #ccc; }
+.interactive-right { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100vh; 
+    background: #f9f9f9; 
+    border-left: 2px solid #ccc;
+}
+    .evidence-viewer {
+    flex: 1; /* Takes up available space */
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
 
+.evidence-viewer img {
+    max-width: 100%;
+    max-height: 90%;
+    border: 2px solid #333;
+}
+
+/* Question Box locks to the bottom */
+.question-box {
+    height: 250px; /* Fixed height for the "box" */
+    padding: 30px;
+    background: #eee;
+    border-top: 4px solid #d9534f;
+    position: relative;
+}
+
+.counter {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-weight: bold;
+    color: #d9534f;
+}
         /* Login Screen */
         #login-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #2c3e50; color: white; text-align: center; }
         .login-box { background: rgba(0,0,0,0.6); padding: 40px; border-radius: 15px; border: 1px solid #555; }
@@ -56,22 +99,53 @@
         </div>
     </div>
 
-    <div id="segment-1" class="segment hidden">
-        <div class="content-left">
-            <h2>FILE 01: The Post-War Partition</h2>
-            <p>In 1945, the dust settled on a broken Germany. The Allies—the US, UK, France, and USSR—didn't just share a victory; they shared the land. Germany was split into four zones.</p>
-            <p><strong>The Berlin Paradox:</strong> Berlin was the ultimate prize. Despite being 100 miles deep within the Soviet-controlled East, the city itself was split into four sectors. This created an island of democracy in a sea of communism.</p>
-        </div>
-   <div class="interactive-right">
-    <img src="https://i.ibb.co/DHHrW3XZ/Map-of-Germany-Resized.png" alt="Evidence" style="width: 100%; border-radius: 8px; margin-bottom: 20px;">
+ <div id="segment-1" class="segment hidden">
+    <div class="content-left">
+        <h2>FILE 01: The Post-War Partition</h2>
+        <p>In 1945, World War II ended and the dust settled on a broken Germany. The Allies—the United States, Great Britain, France, and the USSR—had won a difficult victory, but their work was far from over. Important questions remained: How would the Allies deal with a defeated Germany? What sort of government would the nation have? Before a permanent government could be established, who would rule the land?</p>
 
-    <h3>Investigation Question</h3>
-    <p>Into how many zone was Germany divided after WW2</p>
-    <input type="text" id="s1-q1" placeholder="The _____">
-    <button onclick="checkSection(1, ['4'], 'segment-2')">AUTHENTICATE</button>
-</div>    
+<p>The Allies decided to divide Germany into four occupation zones. Each major power controlled a specific region: the three zones in the West were administered by the U.S., Great Britain, and France, while the zone in the East was ruled by the Soviet Union (U.S.S.R.).</p>
+
+<p><strong>Berlin—Germany’s capital—remained the single most important city.</strong> Because of its significance, the Allies also divided Berlin into U.S., French, British, and Soviet sectors. Berlin, in a sense, became a microcosm of the divided nation. This arrangement created a unique problem: a democratic, capitalist island was now completely surrounded by Communist-controlled territory.</p>    </div>
+
+    <div class="interactive-right">
+        <div class="evidence-viewer">
+            <img src="https://i.ibb.co/4RzXjrZ1/Map-of-Germany-With-Divided-Berlin.png">
+        </div>
+
+        <div class="question-box">
+    <div class="counter" id="s1-counter">Question: 1 / 6</div>
+    
+    <div id="s1-q1-container">
+        <p>Germany was divided into how many occupation zones?</p>
+        <input type="text" id="s1-q1" placeholder="Enter number..." onkeyup="if(event.key==='Enter') checkStep(1, 1, ['4', 'four'], 2)">
     </div>
 
+    <div id="s1-q2-container" class="hidden">
+        <p>Which major power controlled the zone in the East?</p>
+        <input type="text" id="s1-q2" placeholder="Enter country..." onkeyup="if(event.key==='Enter') checkStep(1, 2, ['ussr', 'soviet union', 'soviet'], 3)">
+    </div>
+
+    <div id="s1-q3-container" class="hidden">
+        <p>What city was the most important and also divided into sectors?</p>
+        <input type="text" id="s1-q3" placeholder="Enter city..." onkeyup="if(event.key==='Enter') checkStep(1, 3, ['berlin'], 4)">
+    </div>
+
+    <div id="s1-q4-container" class="hidden">
+        <p>Berlin became a _________ of the divided nation as a whole.</p>
+        <input type="text" id="s1-q4" placeholder="Starts with M..." onkeyup="if(event.key==='Enter') checkStep(1, 4, ['microcosm'], 5)">
+    </div>
+
+    <div id="s1-q5-container" class="hidden">
+        <p>The Western zones were democratic/capitalist, while the East was _________.</p>
+        <input type="text" id="s1-q5" placeholder="Enter ideology..." onkeyup="if(event.key==='Enter') checkStep(1, 5, ['communist', 'communism'], 6)">
+    </div>
+
+    <div id="s1-q6-container" class="hidden">
+        <p>West Berlin was a democratic island completely _________ by communist territory.</p>
+        <input type="text" id="s1-q6" placeholder="One word..." onkeyup="if(event.key==='Enter') checkStep(1, 6, ['surrounded'], 'segment-2')">
+    </div>
+</div>    
     <div id="segment-2" class="segment hidden">
         <div class="content-left" style="background: #fdfaf0;">
             <h2>FILE 02: Operation Little Vittles</h2>
@@ -181,6 +255,43 @@ function loginWithGoogle() {
         setTimeout(() => {
             document.getElementById(`s${currentNum}-q1`).classList.remove('error');
         }, 500);
+    }
+}
+
+function checkStep(segNum, qNum, answers, nextStep) {
+    let input = document.getElementById(`s${segNum}-q${qNum}`);
+    let val = input.value.toLowerCase().trim();
+
+    if (answers.includes(val)) {
+        input.classList.add('correct');
+        
+        // Update Database (Keep your teacher dashboard updated!)
+        if (currentUser) {
+            db.collection("student_progress").doc(currentUser.email).set({
+                lastCompleted: `${segNum}.${qNum}`, 
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+
+        setTimeout(() => {
+            if (typeof nextStep === 'number') {
+                // ADVANCE TO NEXT QUESTION IN SAME BOX
+                document.getElementById(`s${segNum}-q${qNum}-container`).classList.add('hidden');
+                document.getElementById(`s${segNum}-q${nextStep}-container`).classList.remove('hidden');
+                document.getElementById(`s${segNum}-counter`).innerText = `Question: ${nextStep} / 2`; // Update total count accordingly
+                document.getElementById(`s${segNum}-q${nextStep}`).focus();
+            } else {
+                // ADVANCE TO NEXT SEGMENT (Next Step is the ID like 'segment-2')
+                const nextSeg = document.getElementById(nextStep);
+                nextSeg.classList.remove('hidden');
+                document.getElementById('mainBody').style.overflow = "auto";
+                nextSeg.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => { document.getElementById('mainBody').style.overflow = "hidden"; }, 1000);
+            }
+        }, 600);
+    } else {
+        input.classList.add('error');
+        setTimeout(() => input.classList.remove('error'), 500);
     }
 }
     </script>
