@@ -590,43 +590,40 @@ function loginWithGoogle() {
     }
 }
 
-function checkStep(segNum, qNum, answers, nextStep) {
-    let input = document.getElementById(`s${segNum}-q${qNum}`);
-    let val = input.value.toLowerCase().trim();
+function checkStep(seg, q, answers, next) {
+    const input = document.getElementById(`s${seg}-q${q}`);
+    const val = input.value.toLowerCase().trim();
 
     if (answers.includes(val)) {
-        input.classList.add('correct');
-        
-        // Update Database (Keep your teacher dashboard updated!)
-        if (currentUser) {
-            db.collection("student_progress").doc(currentUser.email).set({
-                lastCompleted: `${segNum}.${qNum}`, 
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-        }
+        // 1. Disable the current input so it can't be used again
+        input.disabled = true;
+        input.style.backgroundColor = "#e8f5e9"; // Light green to show it's locked
 
-        setTimeout(() => {
-            if (typeof nextStep === 'number') {
-                // ADVANCE TO NEXT QUESTION IN SAME BOX
-                 let input = document.getElementById(`s${segNum}-q${qNum}`);
-                document.getElementById(`s${segNum}-q${qNum}-container`).classList.add('hidden');
-                document.getElementById(`s${segNum}-q${nextStep}-container`).classList.remove('hidden');
-                document.getElementById(`s${segNum}-counter`).innerText = `Question: ${nextStep} / 2`; // Update total count accordingly
-                document.getElementById(`s${segNum}-q${nextStep}`).focus();
-            } else {
-                // ADVANCE TO NEXT SEGMENT (Next Step is the ID like 'segment-2')
-                const nextSeg = document.getElementById(nextStep);
-                nextSeg.classList.remove('hidden');
-                document.getElementById('mainBody').style.overflow = "auto";
-                nextSeg.scrollIntoView({ behavior: 'smooth' });
-                setTimeout(() => { document.getElementById('mainBody').style.overflow = "hidden"; }, 1000);
-            }
-        }, 600);
-    } else {
-        input.classList.add('error');
-        setTimeout(() => input.classList.remove('error'), 500);
+        // 2. Hide current question, show next
+        document.getElementById(`s${seg}-q${q}-container`).classList.add('hidden');
+
+        if (typeof next === 'number') {
+            // Move to next question in same segment
+            const nextCont = document.getElementById(`s${seg}-q${next}-container`);
+            nextCont.classList.remove('hidden');
+            
+            // AUTO-FOCUS: Put cursor in the next box
+            document.getElementById(`s${seg}-q${next}`).focus();
+        } else {
+            // Move to next SEGMENT
+            document.getElementById(`segment-${seg}`).classList.add('hidden');
+            const nextSeg = document.getElementById(next);
+            nextSeg.classList.remove('hidden');
+
+            // AUTO-FOCUS: Put cursor in the first box of the NEW segment
+            // We use a small timeout to let the screen render before focusing
+            setTimeout(() => {
+                const nextSegNum = next.split('-')[1];
+                const firstInput = document.getElementById(`s${nextSegNum}-q1`);
+                if(firstInput) firstInput.focus();
+            }, 50);
+        }
     }
-}
-    </script>
+} </script>
 </body>
 </html>
