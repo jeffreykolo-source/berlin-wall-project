@@ -177,8 +177,7 @@ input.error {
         </div>
     </div>
 </div>
-
- <div id="segment-1" class="segment">
+<div id="segment-1" class="segment hidden">
     <div class="content-left">
         <h3 style="color: #d9534f; text-shadow: 1px 1px gold;">THE BERLIN WALL: FROM CONSTRUCTION TO REUNIFICATION</h3>
         <hr>
@@ -541,37 +540,41 @@ function loginWithGoogle() {
     firebase.auth().signInWithPopup(provider)
         .then((result) => {
             currentUser = result.user;
+            // Hide login screen
             document.getElementById('login-screen').classList.add('hidden');
             
-            // --- AUTO-RESUME FROM DATABASE ---
+            // --- AUTO-RESUME LOGIC ---
             db.collection("student_progress").doc(currentUser.email).get().then((doc) => {
-                if (doc.exists) {
-                    const lastSeg = doc.data().lastSegmentID; // We will save the ID like 'segment-3'
-                    
-                    // Hide Segment 1 (default) and show their saved segment
-                    document.getElementById('segment-1').classList.add('hidden');
-                    const resumeSeg = document.getElementById(lastSeg);
-                    
-                    if (resumeSeg) {
-                        resumeSeg.classList.remove('hidden');
-                        // Auto-focus the first box of that segment
-                        setTimeout(() => {
-                            const segNum = lastSeg.split('-')[1];
-                            const firstInput = document.getElementById(`s${segNum}-q1`);
-                            if(firstInput) firstInput.focus();
-                        }, 500);
+                let segmentToShow = 'segment-1'; // Default to start
+
+                if (doc.exists && doc.data().lastSegmentID) {
+                    const savedID = doc.data().lastSegmentID;
+                    // Only use the saved ID if it's not 'finish'
+                    if (savedID !== 'finish') {
+                        segmentToShow = savedID;
                     }
-                } else {
-                    // New student? Show Segment 1
-                    document.getElementById('segment-1').classList.remove('hidden');
+                }
+
+                // Now show ONLY the correct segment
+                const target = document.getElementById(segmentToShow);
+                if (target) {
+                    target.classList.remove('hidden');
+                    
+                    // Focus the first input of that segment
+                    setTimeout(() => {
+                        const segNum = segmentToShow.split('-')[1];
+                        const firstInput = document.getElementById(`s${segNum}-q1`);
+                        if (firstInput) firstInput.focus();
+                    }, 100);
                 }
             });
         }).catch((error) => {
+            console.error(error);
             alert("Login failed: " + error.message);
         });
 }
-        
-       function checkSection(currentNum, answers, nextId) {
+
+function checkSection(currentNum, answers, nextId) {
     // 1. Get the user's input
     let val = document.getElementById(`s${currentNum}-q1`).value.toLowerCase().trim();
     
