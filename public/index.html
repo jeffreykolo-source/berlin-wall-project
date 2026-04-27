@@ -625,6 +625,21 @@ function checkStep(seg, q, answers, next) {
     if (answers.includes(val)) {
         input.disabled = true;
         input.style.backgroundColor = "#e8f5e9";
+
+        // --- ADD THIS LOGGING BLOCK HERE ---
+        if(firebase.auth().currentUser) {
+            const userEmail = firebase.auth().currentUser.email;
+            // This calculates a score based on the current segment and question
+            const currentScore = ((seg - 1) * 5) + q; 
+            
+            db.collection("student_progress").doc(userEmail).set({
+                questionsAnswered: currentScore,
+                lastStep: `File ${seg} - Q${q}`,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+        // ------------------------------------
+        
         document.getElementById(`s${seg}-q${q}-container`).classList.add('hidden');
 
         if (typeof next === 'number') {
