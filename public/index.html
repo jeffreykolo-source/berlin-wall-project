@@ -543,32 +543,33 @@ function loginWithGoogle() {
             currentUser = result.user;
             document.getElementById('login-screen').classList.add('hidden');
             
-            // --- AUTO-RESUME LOGIC ---
+            // --- AUTO-RESUME FROM DATABASE ---
             db.collection("student_progress").doc(currentUser.email).get().then((doc) => {
                 if (doc.exists) {
-                    const lastSection = doc.data().lastCompleted;
-                    // Unlock everything up to the section they finished
-                    for (let i = 1; i <= lastSection; i++) {
-                        document.getElementById(`segment-${i}`).classList.remove('hidden');
-                    }
-                    // Scroll them to the last section they were working on
-                    const nextSection = document.getElementById(`segment-${lastSection + 1}`);
-                    if (nextSection) {
-                        nextSection.classList.remove('hidden');
-                        nextSection.scrollIntoView({ behavior: 'smooth' });
+                    const lastSeg = doc.data().lastSegmentID; // We will save the ID like 'segment-3'
+                    
+                    // Hide Segment 1 (default) and show their saved segment
+                    document.getElementById('segment-1').classList.add('hidden');
+                    const resumeSeg = document.getElementById(lastSeg);
+                    
+                    if (resumeSeg) {
+                        resumeSeg.classList.remove('hidden');
+                        // Auto-focus the first box of that segment
+                        setTimeout(() => {
+                            const segNum = lastSeg.split('-')[1];
+                            const firstInput = document.getElementById(`s${segNum}-q1`);
+                            if(firstInput) firstInput.focus();
+                        }, 500);
                     }
                 } else {
-                    // New student? Just show Section 1
+                    // New student? Show Segment 1
                     document.getElementById('segment-1').classList.remove('hidden');
                 }
             });
-            // -------------------------
-
         }).catch((error) => {
             alert("Login failed: " + error.message);
         });
 }
-
         
        function checkSection(currentNum, answers, nextId) {
     // 1. Get the user's input
@@ -614,49 +615,47 @@ function loginWithGoogle() {
         }, 500);
     }
 }
-
 function checkStep(seg, q, answers, next) {
     const input = document.getElementById(`s${seg}-q${q}`);
     const val = input.value.toLowerCase().trim();
 
     if (answers.includes(val)) {
-        // 1. Disable the current input so it can't be used again
         input.disabled = true;
-        input.style.backgroundColor = "#e8f5e9"; // Light green to show it's locked
-
-        // 2. Hide current question, show next
+        input.style.backgroundColor = "#e8f5e9";
         document.getElementById(`s${seg}-q${q}-container`).classList.add('hidden');
 
         if (typeof next === 'number') {
-            // Move to next question in same segment
             const nextCont = document.getElementById(`s${seg}-q${next}-container`);
             nextCont.classList.remove('hidden');
-            
-            // AUTO-FOCUS: Put cursor in the next box
             document.getElementById(`s${seg}-q${next}`).focus();
         } else {
-            // Move to next SEGMENT
+            // MOVE TO NEXT SEGMENT
             document.getElementById(`segment-${seg}`).classList.add('hidden');
             const nextSeg = document.getElementById(next);
-            nextSeg.classList.remove('hidden');
+            
+            if (nextSeg) {
+                nextSeg.classList.remove('hidden');
 
-            // AUTO-FOCUS: Put cursor in the first box of the NEW segment
-            // We use a small timeout to let the screen render before focusing
-            setTimeout(() => {
-                const nextSegNum = next.split('-')[1];
-                const firstInput = document.getElementById(`s${nextSegNum}-q1`);
-                if(firstInput) firstInput.focus();
-            }, 50);
+                // --- DATABASE LOGGING START ---
+                if(firebase.auth().currentUser) {
+                    const userEmail = firebase.auth().currentUser.email;
+                    db.collection("student_progress").doc(userEmail).set({
+                        email: userEmail,
+                        lastSegmentID: next, // Saves 'segment-2', 'segment-3', etc.
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                }
+                // --- DATABASE LOGGING END ---
+
+                setTimeout(() => {
+                    const nextSegNum = next.split('-')[1];
+                    const firstInput = document.getElementById(`s${nextSegNum}-q1`);
+                    if(firstInput) firstInput.focus();
+                }, 50);
+            }
         }
     }
 }
-
-window.onload = () => {
-    // Focus on the very first input (Segment 1, Question 1)
-    const firstBox = document.getElementById('s1-q1');
-    if(firstBox) firstBox.focus();
-};
-    
 </script>
 </body>
 </html>
