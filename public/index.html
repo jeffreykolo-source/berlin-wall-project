@@ -233,20 +233,56 @@ input.error {
     </div>    
     </div>
     
-    <div id="segment-2" class="segment hidden">
-        <div class="content-left" style="background: #fdfaf0;">
-            <h2>FILE 02: Operation Little Vittles</h2>
-            <p>When the Soviets blocked all land routes into West Berlin in 1948, the city faced starvation. The West responded with the Berlin Airlift.</p>
-            <p>Lieutenant Gail Halvorsen noticed the children of Berlin had nothing. He began dropping candy attached to tiny parachutes. He would wiggle his plane's wings so children knew the "Candy Bomber" had arrived.</p>
-        </div>
-        <div class="interactive-right">
-            <h3>Investigation Question</h3>
-            <p>What did Halvorsen wiggle to signal the children?</p>
-            <input type="text" id="s2-q1" placeholder="The _____">
-            <button onclick="checkSection(2, ['wings'], 'segment-3')">AUTHENTICATE</button>
-        </div>
+    <div id="segment-2" class="segment hidden"> <div class="content-left">
+        <h2>FILE 02: The Wall Goes Up (August 1961)</h2>
+        <p>By 1961, East Germany (the GDR) was facing a crisis. Thousands of its citizens, many of them highly skilled workers and professionals, were fleeing to West Berlin every single day. This "brain drain" threatened to collapse the East German economy. To stop the exodus, the Soviet-backed government decided to seal the border once and for all.</p>
+
+        <p>In the early morning hours of <strong>August 13, 1961</strong>, East German soldiers and construction workers began tearing up streets and stringing miles of barbed wire through the heart of Berlin. This operation was conducted in total secrecy under the cover of darkness. Families who lived on opposite sides of the street suddenly found themselves separated by a military line they were no longer allowed to cross.</p>
+
+        <p>At first, the "Wall" wasn't a wall at all—it was a <strong>tangle of barbed wire and concrete posts</strong> backed by armed guards. However, within days, workers began replacing the wire with hollow gray bricks. This initial structure physically split the city, cutting off subway lines, phone wires, and even bricking up the windows of apartment buildings that faced West Berlin. What began as a temporary fence would eventually evolve into a massive system of concrete and death strips.</p>
     </div>
 
+    <div class="interactive-right">
+        <div class="evidence-viewer">
+            <img src="wall-construction.png" alt="Construction of the Berlin Wall">
+        </div>
+
+        <div class="question-box">
+            <div id="s2-counter" class="counter">02 / 06</div>
+            
+            <div id="s2-q1-container">
+                <p>In what month and year did construction begin?</p>
+                <input type="text" id="s2-q1" placeholder="Month Year..." onkeyup="if(event.key==='Enter') checkStep(2, 1, ['august 1961'], 2)">
+            </div>
+
+            <div id="s2-q2-container" class="hidden">
+                <p>The "Brain ____" described the loss of skilled workers to the West.</p>
+                <input type="text" id="s2-q2" placeholder="One word..." onkeyup="if(event.key==='Enter') checkStep(2, 2, ['drain'], 3)">
+            </div>
+
+            <div id="s2-q3-container" class="hidden">
+                <p>The wall was initially built to stop people from ________ to the West.</p>
+                <input type="text" id="s2-q3" placeholder="Starts with F..." onkeyup="if(event.key==='Enter') checkStep(2, 3, ['fleeing', 'escaping'], 4)">
+            </div>
+
+            <div id="s2-q4-container" class="hidden">
+                <p>The very first version of the wall was made of ________ wire.</p>
+                <input type="text" id="s2-q4" placeholder="Sharp wire..." onkeyup="if(event.key==='Enter') checkStep(2, 4, ['barbed'], 5)">
+            </div>
+
+            <div id="s2-q5-container" class="hidden">
+                <p>To block the view of the West, the GDR ________ up apartment windows.</p>
+                <input type="text" id="s2-q5" placeholder="Building material..." onkeyup="if(event.key==='Enter') checkStep(2, 5, ['bricked'], 6)">
+            </div>
+
+            <div id="s2-q6-container" class="hidden">
+                <p>Families were ________ by the sudden military line.</p>
+                <input type="text" id="s2-q6" placeholder="One word..." onkeyup="if(event.key==='Enter') checkStep(2, 6, ['separated', 'split'], 'segment-3')">
+            </div>
+        </div> 
+    </div>
+
+</div>
     <script>
         // --- PASTE YOUR CONFIG HERE ---
 
