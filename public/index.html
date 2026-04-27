@@ -233,55 +233,111 @@ input.error {
     </div>    
     </div>
     
-    <div id="segment-2" class="segment hidden"> <div class="content-left">
-        <h2>FILE 02: The Wall Goes Up (August 1961)</h2>
-        <p>By 1961, East Germany (the GDR) was facing a crisis. Thousands of its citizens, many of them highly skilled workers and professionals, were fleeing to West Berlin every single day. This "brain drain" threatened to collapse the East German economy. To stop the exodus, the Soviet-backed government decided to seal the border once and for all.</p>
-
-        <p>In the early morning hours of <strong>August 13, 1961</strong>, East German soldiers and construction workers began tearing up streets and stringing miles of barbed wire through the heart of Berlin. This operation was conducted in total secrecy under the cover of darkness. Families who lived on opposite sides of the street suddenly found themselves separated by a military line they were no longer allowed to cross.</p>
-
-        <p>At first, the "Wall" wasn't a wall at all—it was a <strong>tangle of barbed wire and concrete posts</strong> backed by armed guards. However, within days, workers began replacing the wire with hollow gray bricks. This initial structure physically split the city, cutting off subway lines, phone wires, and even bricking up the windows of apartment buildings that faced West Berlin. What began as a temporary fence would eventually evolve into a massive system of concrete and death strips.</p>
+   <div id="segment-2" class="segment hidden">
+    <div class="content-left">
+        <h2>FILE 02: The Berlin Airlift</h2>
+        <p>In June 1948, the Cold War reached a breaking point. The Soviet Union, hoping to take full control of the city, blocked all roads, canals, and railways leading into West Berlin. This was known as the <strong>Berlin Blockade</strong>. Over 2 million people were suddenly cut off from food, coal, and medicine.</p>
+        
+        <p>The Western Allies faced a choice: surrender West Berlin or go to war. Instead, they chose a third option: an <strong>Airlift</strong>. For nearly a year, American and British planes landed in Berlin every few minutes, carrying everything from flour to fuel. It was the largest humanitarian flight operation in history, proving that the West would not abandon the city.</p>
     </div>
 
     <div class="interactive-right">
         <div class="evidence-viewer">
-            <img src="wall-construction.png" alt="Construction of the Berlin Wall">
+            <img src="berlin-airlift.png" alt="Planes landing in Berlin">
         </div>
-
         <div class="question-box">
-            <div id="s2-counter" class="counter">02 / 06</div>
-            
+            <div id="s2-counter" class="counter">02 / 05</div>
             <div id="s2-q1-container">
-                <p>In what month and year did construction begin?</p>
-                <input type="text" id="s2-q1" placeholder="Month Year..." onkeyup="if(event.key==='Enter') checkStep(2, 1, ['august 1961'], 2)">
+                <p>The Soviets used a _________ to cut off all land routes to the city.</p>
+                <input type="text" id="s2-q1" onkeyup="if(event.key==='Enter') checkStep(2, 1, ['blockade'], 2)">
             </div>
-
             <div id="s2-q2-container" class="hidden">
-                <p>The "Brain ____" described the loss of skilled workers to the West.</p>
-                <input type="text" id="s2-q2" placeholder="One word..." onkeyup="if(event.key==='Enter') checkStep(2, 2, ['drain'], 3)">
+                <p>How many millions of people were cut off from supplies?</p>
+                <input type="text" id="s2-q2" onkeyup="if(event.key==='Enter') checkStep(2, 2, ['2', 'two'], 3)">
             </div>
-
             <div id="s2-q3-container" class="hidden">
-                <p>The wall was initially built to stop people from ________ to the West.</p>
-                <input type="text" id="s2-q3" placeholder="Starts with F..." onkeyup="if(event.key==='Enter') checkStep(2, 3, ['fleeing', 'escaping'], 4)">
+                <p>The Allies sent supplies by ________ instead of by land.</p>
+                <input type="text" id="s2-q3" onkeyup="if(event.key==='Enter') checkStep(2, 3, ['air', 'plane', 'planes', 'airlift'], 4)">
             </div>
-
             <div id="s2-q4-container" class="hidden">
-                <p>The very first version of the wall was made of ________ wire.</p>
-                <input type="text" id="s2-q4" placeholder="Sharp wire..." onkeyup="if(event.key==='Enter') checkStep(2, 4, ['barbed'], 5)">
+                <p>West Berlin needed food and ________ to stay warm.</p>
+                <input type="text" id="s2-q4" onkeyup="if(event.key==='Enter') checkStep(2, 4, ['coal', 'fuel'], 5)">
             </div>
-
             <div id="s2-q5-container" class="hidden">
-                <p>To block the view of the West, the GDR ________ up apartment windows.</p>
-                <input type="text" id="s2-q5" placeholder="Building material..." onkeyup="if(event.key==='Enter') checkStep(2, 5, ['bricked'], 6)">
+                <p>The Airlift proved the West would not ________ West Berlin.</p>
+                <input type="text" id="s2-q5" onkeyup="if(event.key==='Enter') checkStep(2, 5, ['abandon', 'surrender', 'leave'], 'segment-3')">
             </div>
+        </div>
+    </div>
+</div>
 
-            <div id="s2-q6-container" class="hidden">
-                <p>Families were ________ by the sudden military line.</p>
-                <input type="text" id="s2-q6" placeholder="One word..." onkeyup="if(event.key==='Enter') checkStep(2, 6, ['separated', 'split'], 'segment-3')">
-            </div>
-        </div> 
+ <div id="segment-3" class="segment hidden">
+    <div class="content-left" style="background: #fdfaf0;"> <h2>FILE 03: Operation Little Vittles</h2>
+        <p>During the Airlift, an American pilot named <strong>Gail Halvorsen</strong> noticed children watching the planes at Tempelhof Airport. He realized they had no sweets or chocolate. He promised to drop candy from his plane the next day.</p>
+        
+        <p>To make sure the children knew which plane was his, he told them he would <strong>wiggle his wings</strong> as he approached. He used handkerchiefs as tiny parachutes to safely drop chocolate bars and gum. Soon, other pilots joined in. This act of kindness, known as "Operation Little Vittles," turned the former enemies into lifelong friends.</p>
     </div>
 
+    <div class="interactive-right">
+        <div class="evidence-viewer">
+            <img src="candy-bomber.png" alt="Candy parachutes">
+        </div>
+        <div class="question-box">
+            <div id="s3-counter" class="counter">03 / 04</div>
+            <div id="s3-q1-container">
+                <p>What was Gail Halvorsen’s famous nickname? The Candy ________.</p>
+                <input type="text" id="s3-q1" onkeyup="if(event.key==='Enter') checkStep(3, 1, ['bomber'], 2)">
+            </div>
+            <div id="s3-q2-container" class="hidden">
+                <p>What did he wiggle to signal the children?</p>
+                <input type="text" id="s3-q2" onkeyup="if(event.key==='Enter') checkStep(3, 2, ['wings'], 3)">
+            </div>
+            <div id="s3-q3-container" class="hidden">
+                <p>He used ___________ as parachutes for the candy.</p>
+                <input type="text" id="s3-q3" onkeyup="if(event.key==='Enter') checkStep(3, 3, ['handkerchiefs', 'handkerchief'], 4)">
+            </div>
+            <div id="s3-q4-container" class="hidden">
+                <p>The mission was named Operation Little _________.</p>
+                <input type="text" id="s3-q4" onkeyup="if(event.key==='Enter') checkStep(3, 4, ['vittles'], 'segment-4')">
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="segment-4" class="segment hidden">
+    <div class="content-left">
+        <h2>FILE 04: The Wall Goes Up (1961)</h2>
+        <p>While the Airlift saved Berlin in 1949, the tension never left. By 1961, the East German government was desperate to stop people from fleeing to the West. In the middle of the night on <strong>August 13, 1961</strong>, they began building a barrier that would change the world.</p>
+        
+        <p>Soldiers tore up streets and installed miles of <strong>barbed wire</strong>. This sudden border literally split the city in half, running through neighborhoods and even separating families. Within days, the wire was replaced by concrete blocks, creating a permanent seal between East and West.</p>
+    </div>
+
+    <div class="interactive-right">
+        <div class="evidence-viewer">
+            <img src="wall-construction.png" alt="Building the wall">
+        </div>
+        <div class="question-box">
+            <div id="s4-counter" class="counter">04 / 04</div>
+            <div id="s4-q1-container">
+                <p>In what month and year did construction begin?</p>
+                <input type="text" id="s4-q1" onkeyup="if(event.key==='Enter') checkStep(4, 1, ['august 1961'], 2)">
+            </div>
+            <div id="s4-q2-container" class="hidden">
+                <p>The wall was built in total ________ under the cover of night.</p>
+                <input type="text" id="s4-q2" onkeyup="if(event.key==='Enter') checkStep(4, 2, ['secrecy', 'secret'], 3)">
+            </div>
+            <div id="s4-q3-container" class="hidden">
+                <p>The initial barrier was made of ________ wire.</p>
+                <input type="text" id="s4-q3" onkeyup="if(event.key==='Enter') checkStep(4, 3, ['barbed'], 4)">
+            </div>
+            <div id="s4-q4-container" class="hidden">
+                <p>The wall "literally" split the ________ in two.</p>
+                <input type="text" id="s4-q4" onkeyup="if(event.key==='Enter') checkStep(4, 4, ['city'], 'segment-5')">
+            </div>
+        </div>
+    </div>
+</div>
+    
 </div>
     <script>
         // --- PASTE YOUR CONFIG HERE ---
