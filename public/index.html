@@ -233,12 +233,12 @@ input.error {
     </div>    
     </div>
     
-   <div id="segment-2" class="segment hidden">
+<div id="segment-2" class="segment hidden">
     <div class="content-left">
         <h2>FILE 02: The Berlin Airlift</h2>
-        <p>In June 1948, the Cold War reached a breaking point. The Soviet Union, hoping to take full control of Berlin, used a blockade to try to force the West out. The USSR blocked all roads, canals, and railways leading into West Berlin (This was known as the <strong>Berlin Blockade</strong>). Over 2 million people were suddenly cut off from food, coal, and medicine.  Stalin calculated that the West would not simply let those people die nor risk a war over Berlin.    </p>
+        <p>In June 1948, the Cold War reached a breaking point. The Soviet Union, hoping to take full control of Berlin, used a blockade to try to force the West out. The USSR blocked all roads, canals, and railways leading into West Berlin (This was known as the <strong>Berlin Blockade</strong>). Over 2 million people were suddenly cut off from food, coal, and medicine. Stalin calculated that the West would not simply let those people die nor risk a war over Berlin.</p>
         
-        <p>The Western Allies faced a choice: surrender West Berlin or go to war. Instead, they chose a third option: an <strong>Airlift</strong>. For nearly a year, American and British planes landed in Berlin every few minutes, carrying everything from flour to fuel. It was the largest humanitarian flight operation in history, proving that the West would not abandon the city.  At the height of the Berlin Airlift, planes were landing in West Berlin every 30-45 seconds.  In all, the Allies made 278,228 total flights and sent in slightly over 2.3 million tons of supplies.</p>
+        <p>The Western Allies faced a choice: surrender West Berlin or go to war. Instead, they chose a third option: an <strong>Airlift</strong>. For nearly a year, American and British planes landed in Berlin every few minutes, carrying everything from flour to fuel. It was the largest humanitarian flight operation in history, proving that the West would not abandon the city. At the height of the Berlin Airlift, planes were landing in West Berlin every 30-45 seconds. In all, the Allies made 278,228 total flights and sent in slightly over 2.3 million tons of supplies.</p>
     </div>
 
     <div class="interactive-right">
@@ -246,45 +246,50 @@ input.error {
             <img src="https://upload.wikimedia.org/wikipedia/commons/9/92/C-54_landing_at_Tempelhof.jpg" alt="Planes landing in Berlin">
         </div>
         <div class="question-box">
-            <div id="s2-counter" class="counter">02 / 05</div>
+            <div id="s2-counter" class="counter">02 / 08</div>
+
             <div id="s2-q1-container">
                 <p>The Soviets used a _________ to cut off all land routes to the city.</p>
                 <input type="text" id="s2-q1" onkeyup="if(event.key==='Enter') checkStep(2, 1, ['blockade'], 2)">
             </div>
+
             <div id="s2-q2-container" class="hidden">
                 <p>How many millions of people were cut off from supplies?</p>
                 <input type="text" id="s2-q2" onkeyup="if(event.key==='Enter') checkStep(2, 2, ['2', 'two'], 3)">
             </div>
+
             <div id="s2-q3-container" class="hidden">
                 <p>Instead of a withdraw or a direct challenge to the USSR, the allies chose to use a(n):</p>
                 <input type="text" id="s2-q3" onkeyup="if(event.key==='Enter') checkStep(2, 3, ['airlift'], 4)">
             </div>
+
             <div id="s2-q4-container" class="hidden">
                 <p>These planes carried everything from flour to ______________.</p>
                 <input type="text" id="s2-q4" onkeyup="if(event.key==='Enter') checkStep(2, 4, ['coal', 'fuel'], 5)">
             </div>
+
             <div id="s2-q5-container" class="hidden">
                 <p>The Airlift proved the West would not ________ West Berlin.</p>
-                <input type="text" id="s2-q5" onkeyup="if(event.key==='Enter') checkStep(2, 5, ['abandon', 'surrender', 'leave'], 'segment-3')">
+                <input type="text" id="s2-q5" onkeyup="if(event.key==='Enter') checkStep(2, 5, ['abandon', 'surrender', 'leave'], 6)">
             </div>
 
-                        <div id="s2-q6-container" class="hidden">
+            <div id="s2-q6-container" class="hidden">
                 <p>The Berlin Airlift became the largest ____________ flight operation in history.</p>
-                <input type="text" id="s2-q5" onkeyup="if(event.key==='Enter') checkStep(2, 5, ['humanitarian'], 'segment-3')">
-
-                              <div id="s2-q7-container" class="hidden">
-                <p>At the height of the operation, planes were landing in Berlin at the base of every 30-45 _____________.</p>
-                <input type="text" id="s2-q5" onkeyup="if(event.key==='Enter') checkStep(2, 5, ['seconds'], 'segment-3')">
-
-                                  
-                              <div id="s2-q8 container" class="hidden">
-                <p>In all, the Allies sent in slightly over 2.3 million _____________ of supplies.</p>
-                <input type="text" id="s2-q5" onkeyup="if(event.key==='Enter') checkStep(2, 5, ['tons'], 'segment-3')">
+                <input type="text" id="s2-q6" onkeyup="if(event.key==='Enter') checkStep(2, 6, ['humanitarian'], 7)">
             </div>
-        </div>
+
+            <div id="s2-q7-container" class="hidden">
+                <p>At the height of the operation, planes were landing in Berlin at the base of every 30-45 _____________.</p>
+                <input type="text" id="s2-q7" onkeyup="if(event.key==='Enter') checkStep(2, 7, ['seconds'], 8)">
+            </div>
+
+            <div id="s2-q8-container" class="hidden">
+                <p>In all, the Allies sent in slightly over 2.3 million _____________ of supplies.</p>
+                <input type="text" id="s2-q8" onkeyup="if(event.key==='Enter') checkStep(2, 8, ['tons'], 'segment-3')">
+            </div>
+        </div> 
     </div>
 </div>
-
  <div id="segment-3" class="segment hidden">
     <div class="content-left" style="background: #fdfaf0;"> <h2>FILE 03: Operation Little Vittles</h2>
         <p>During the Airlift, an American pilot named <strong>Gail Halvorsen</strong> noticed children watching the planes at Tempelhof Airport. He realized they had no sweets or chocolate. He promised to drop candy from his plane the next day.</p>
