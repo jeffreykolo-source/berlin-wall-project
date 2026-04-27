@@ -624,6 +624,14 @@ function checkStep(seg, q, answers, next) {
             }, 50);
         }
     }
-} </script>
+}
+
+window.onload = () => {
+    // Focus on the very first input (Segment 1, Question 1)
+    const firstBox = document.getElementById('s1-q1');
+    if(firstBox) firstBox.focus();
+};
+    
+</script>
 </body>
 </html>
