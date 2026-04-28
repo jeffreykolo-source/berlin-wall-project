@@ -1,55 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Berlin Wall Progress Monitor</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <style>
-        body { font-family: 'Courier New', Courier, monospace; background-color: #222; color: #0f0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: #000; padding: 20px; border: 1px solid #0f0; }
-        h2 { text-align: center; text-transform: uppercase; letter-spacing: 2px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { border-bottom: 2px solid #0f0; padding: 10px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #333; }
-        .status-pill { border: 1px solid #0f0; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
-        .timestamp { color: #888; font-size: 0.85em; }
-        .complete { color: #000; background: #0f0; font-weight: bold; }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>Berlin Wall: Archive Access Logs</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Agent (Email)</th>
-                <th>Archive Progress</th>
-                <th>Last Ping</th>
-            </tr>
-        </thead>
-        <tbody id="dashboard-body"></tbody>
-    </table>
-</div>
-
 <script>
-    // --- INSERT YOUR FIREBASE CONFIG HERE ---
-       const firebaseConfig = {
-  apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
-  authDomain: "berlin-wall-f05a8.firebaseapp.com",
-  projectId: "berlin-wall-f05a8",
-  storageBucket: "berlin-wall-f05a8.firebasestorage.app",
-  messagingSenderId: "374515847282",
-  appId: "1:374515847282:web:b052c0c218937fae7432eb"
-};
-        // ------------------------------
+    // --- FIREBASE CONFIG ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
+        authDomain: "berlin-wall-f05a8.firebaseapp.com",
+        projectId: "berlin-wall-f05a8",
+        storageBucket: "berlin-wall-f05a8.firebasestorage.app",
+        messagingSenderId: "374515847282",
+        appId: "1:374515847282:web:b052c0c218937fae7432eb"
+    };
 
+    // Initialize Firebase only if it hasn't been initialized yet
+    if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
-        
-  const db = firebase.firestore(); // <--- ADD THIS LINE HERE
-       =
-
+    }
+    
+    const db = firebase.firestore();
 
     // --- REAL-TIME LISTENER ---
     db.collection("student_progress").onSnapshot((snapshot) => {
@@ -59,15 +24,14 @@
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // FIX 1: Use the Document Name (the email) instead of data.email
+            // Use the Document Name (the email)
             const studentEmail = doc.id; 
 
-            // FIX 2: Correctly format the Section from 'lastSegmentID'
+            // Format the Progress
             let progress = "0";
             let rowClass = "";
             
             if (data.lastSegmentID) {
-                // Remove the "segment-" prefix if it exists
                 progress = data.lastSegmentID.replace('segment-', '').toUpperCase();
                 if (progress === "FINISH") {
                     progress = "ARCHIVE CLEAR ✅";
@@ -77,9 +41,10 @@
                 }
             }
 
-            // FIX 3: Robust Timestamp formatting
+            // Robust Timestamp formatting
             let lastPing = "--:--:--";
             if (data.lastActive) {
+                // Handle Firebase timestamp vs standard JS date
                 const date = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
                 lastPing = date.toLocaleTimeString([], { hour12: false });
             }
@@ -95,6 +60,3 @@
         });
     });
 </script>
-
-</body>
-</html>
