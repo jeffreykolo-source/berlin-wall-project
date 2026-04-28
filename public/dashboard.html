@@ -2,96 +2,86 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Command Center</title>
+    <title>Berlin Wall Progress Monitor</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        h2 { text-align: center; color: #2c3e50; }
-        
-        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background-color: #2c3e50; color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; }
-        tr:hover { background-color: #f1f1f1; }
-
-        .pill { background: #e0e0e0; padding: 4px 10px; border-radius: 20px; font-size: 0.9em; font-weight: bold; color: #555; }
-        .active-time { color: #27ae60; font-weight: bold; font-family: monospace; }
-        .completed { background: #27ae60; color: white; }
+        body { font-family: 'Courier New', Courier, monospace; background-color: #222; color: #0f0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: #000; padding: 20px; border: 1px solid #0f0; }
+        h2 { text-align: center; text-transform: uppercase; letter-spacing: 2px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { border-bottom: 2px solid #0f0; padding: 10px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #333; }
+        .status-pill { border: 1px solid #0f0; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; }
+        .timestamp { color: #888; font-size: 0.85em; }
+        .complete { color: #000; background: #0f0; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Real-Time Progress Tracker</h2>
+    <h2>Berlin Wall: Archive Access Logs</h2>
     <table>
         <thead>
             <tr>
-                <th>Student Email</th>
-                <th>Current Status</th>
-                <th>Last Active</th>
+                <th>Agent (Email)</th>
+                <th>Archive Progress</th>
+                <th>Last Ping</th>
             </tr>
         </thead>
-        <tbody id="dashboard-body">
-            </tbody>
+        <tbody id="dashboard-body"></tbody>
     </table>
 </div>
 
 <script>
-    // --- YOUR FIREBASE CONFIG ---
+    // --- INSERT YOUR FIREBASE CONFIG HERE ---
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
         projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_MESSAGING_ID",
         appId: "YOUR_APP_ID"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // --- LIVE UPDATES ---
+    // --- REAL-TIME LISTENER ---
     db.collection("student_progress").onSnapshot((snapshot) => {
         const tableBody = document.getElementById('dashboard-body');
-        tableBody.innerHTML = ""; // Clear table for fresh update
+        tableBody.innerHTML = ""; 
 
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // 1. FIX: Use doc.id for the email to prevent 'undefined'
+            // FIX 1: Use the Document Name (the email) instead of data.email
             const studentEmail = doc.id; 
 
-            // 2. FIX: Handle section ID and formatting
-            let sectionDisplay = "0";
-            let pillClass = "pill";
-
+            // FIX 2: Correctly format the Section from 'lastSegmentID'
+            let progress = "0";
+            let rowClass = "";
+            
             if (data.lastSegmentID) {
-                sectionDisplay = data.lastSegmentID.replace('segment-', '').toUpperCase();
-                if (sectionDisplay === "FINISH") {
-                    sectionDisplay = "DONE ✅";
-                    pillClass = "pill completed";
+                // Remove the "segment-" prefix if it exists
+                progress = data.lastSegmentID.replace('segment-', '').toUpperCase();
+                if (progress === "FINISH") {
+                    progress = "ARCHIVE CLEAR ✅";
+                    rowClass = "complete";
                 } else {
-                    sectionDisplay = `SECTION ${sectionDisplay} / 10`;
+                    progress = `FILE ${progress} / 10`;
                 }
             }
 
-            // 3. FIX: Handle Timestamp
-            let timeStr = "Waiting...";
+            // FIX 3: Robust Timestamp formatting
+            let lastPing = "--:--:--";
             if (data.lastActive) {
-                // Check if it's a Firebase Timestamp object or a standard Date
                 const date = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
-                timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                lastPing = date.toLocaleTimeString([], { hour12: false });
             }
 
-            // Create the table row
             const row = `
                 <tr>
-                    <td><strong>${studentEmail}</strong></td>
-                    <td><span class="${pillClass}">${sectionDisplay}</span></td>
-                    <td class="active-time">${timeStr}</td>
+                    <td>${studentEmail}</td>
+                    <td><span class="status-pill ${rowClass}">${progress}</span></td>
+                    <td class="timestamp">${lastPing}</td>
                 </tr>
             `;
             tableBody.innerHTML += row;
