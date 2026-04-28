@@ -2,74 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Teacher Dashboard: Live Progress</title>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Command Center</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; background: #f0f2f5; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        h2 { text-align: center; color: #2c3e50; }
+        
+        .container { max-width: 900px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background-color: #34495e; color: white; }
-        .status-active { color: #27ae60; font-weight: bold; }
-        .progress-pill { background: #3498db; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.9rem; }
+        th { background-color: #2c3e50; color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; }
+        tr:hover { background-color: #f1f1f1; }
+
+        .pill { background: #e0e0e0; padding: 4px 10px; border-radius: 20px; font-size: 0.9em; font-weight: bold; color: #555; }
+        .active-time { color: #27ae60; font-weight: bold; font-family: monospace; }
+        .completed { background: #27ae60; color: white; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Berlin Wall: Live Grade Book</h1>
-    <p>Watching <strong>130 Students</strong> in real-time...</p>
-    
+    <h2>Real-Time Progress Tracker</h2>
     <table>
         <thead>
             <tr>
                 <th>Student Email</th>
-                <th>Current Progress</th>
+                <th>Current Status</th>
                 <th>Last Active</th>
             </tr>
         </thead>
-        <tbody id="gradebook-body">
+        <tbody id="dashboard-body">
             </tbody>
     </table>
 </div>
 
 <script>
-    // --- PASTE YOUR SAME CONFIG HERE ---
+    // --- YOUR FIREBASE CONFIG ---
     const firebaseConfig = {
         apiKey: "YOUR_API_KEY",
-        authDomain: "berlin-wall-f05a8.firebaseapp.com",
-        projectId: "berlin-wall-f05a8",
-        storageBucket: "berlin-wall-f05a8.appspot.com",
-        messagingSenderId: "YOUR_ID",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_ID",
         appId: "YOUR_APP_ID"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // THIS IS THE MAGIC: It listens for any changes in 'student_progress'
-    db.collection("student_progress").orderBy("timestamp", "desc")
-      .onSnapshot((snapshot) => {
-          const tbody = document.getElementById('gradebook-body');
-          tbody.innerHTML = ""; // Clear table for update
+    // --- LIVE UPDATES ---
+    db.collection("student_progress").onSnapshot((snapshot) => {
+        const tableBody = document.getElementById('dashboard-body');
+        tableBody.innerHTML = ""; // Clear table for fresh update
 
-          snapshot.forEach((doc) => {
-              const data = doc.data();
-              const timestamp = data.timestamp ? data.timestamp.toDate().toLocaleTimeString() : "Just now";
-              
-              tbody.innerHTML += `
-                  <tr>
-                      <td>${data.email}</td>
-                      <td><span class="progress-pill">Section ${data.lastCompleted} / 10</span></td>
-                      <td class="status-active">${timestamp}</td>
-                  </tr>
-              `;
-          });
-      });
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            // 1. FIX: Use doc.id for the email to prevent 'undefined'
+            const studentEmail = doc.id; 
+
+            // 2. FIX: Handle section ID and formatting
+            let sectionDisplay = "0";
+            let pillClass = "pill";
+
+            if (data.lastSegmentID) {
+                sectionDisplay = data.lastSegmentID.replace('segment-', '').toUpperCase();
+                if (sectionDisplay === "FINISH") {
+                    sectionDisplay = "DONE ✅";
+                    pillClass = "pill completed";
+                } else {
+                    sectionDisplay = `SECTION ${sectionDisplay} / 10`;
+                }
+            }
+
+            // 3. FIX: Handle Timestamp
+            let timeStr = "Waiting...";
+            if (data.lastActive) {
+                // Check if it's a Firebase Timestamp object or a standard Date
+                const date = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
+                timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            }
+
+            // Create the table row
+            const row = `
+                <tr>
+                    <td><strong>${studentEmail}</strong></td>
+                    <td><span class="${pillClass}">${sectionDisplay}</span></td>
+                    <td class="active-time">${timeStr}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    });
 </script>
+
 </body>
 </html>
