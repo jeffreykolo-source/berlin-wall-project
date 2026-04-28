@@ -35,11 +35,21 @@
 
 <script>
     // --- INSERT YOUR FIREBASE CONFIG HERE ---
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        projectId: "YOUR_PROJECT_ID",
-        appId: "YOUR_APP_ID"
-    };
+       const firebaseConfig = {
+  apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
+  authDomain: "berlin-wall-f05a8.firebaseapp.com",
+  projectId: "berlin-wall-f05a8",
+  storageBucket: "berlin-wall-f05a8.firebasestorage.app",
+  messagingSenderId: "374515847282",
+  appId: "1:374515847282:web:b052c0c218937fae7432eb"
+};
+        // ------------------------------
+
+        firebase.initializeApp(firebaseConfig);
+        
+  const db = firebase.firestore(); // <--- ADD THIS LINE HERE
+        const provider = new firebase.auth.GoogleAuthProvider();
+        let currentUser = null;
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
