@@ -1,5 +1,5 @@
 <script>
-    // --- FIREBASE CONFIG ---
+    // --- FIREBASE CONFIG (Kept as is) ---
     const firebaseConfig = {
         apiKey: "AIzaSyAn1ip5ibEQsagBRaS0U0onKjFXtQMMZuc",
         authDomain: "berlin-wall-f05a8.firebaseapp.com",
@@ -14,7 +14,7 @@
     }
     const db = firebase.firestore();
 
-    // --- REAL-TIME LISTENER ---
+    // --- THE REAL-TIME FIX ---
     db.collection("student_progress").onSnapshot((snapshot) => {
         const tableBody = document.getElementById('dashboard-body');
         tableBody.innerHTML = ""; 
@@ -22,33 +22,34 @@
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // 1. Use the email field from the data
+            // 1. Fix Email: Use the 'email' field or the Doc ID
             const studentEmail = data.email || doc.id; 
 
-            // 2. Use 'lastStep' for more detail (e.g., File 7 - Q4)
-            // Fallback to lastSegmentID if lastStep is missing
-            let progress = data.lastStep || data.lastSegmentID || "Starting...";
+            // 2. Fix Progress: Use 'lastStep' (e.g., "File 7 - Q4")
+            let progress = data.lastStep || "Starting...";
             let rowClass = "";
             
-            if (progress.includes("finish") || progress.includes("10")) {
+            // Check if they finished
+            if (progress.toLowerCase().includes("finish") || progress.toLowerCase().includes("clear")) {
                 progress = "ARCHIVE CLEAR ✅";
                 rowClass = "complete";
             }
 
-            // 3. Fix the Timestamp (Using your actual field: 'timestamp')
+            // 3. Fix Timestamp: Your field is named 'timestamp', not 'lastActive'
             let lastPing = "--:--:--";
             if (data.timestamp) {
-                // Firebase timestamp objects have a .toDate() method
+                // Firebase timestamp objects use .toDate()
                 const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
                 lastPing = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
 
-            // 4. Added a "Total Answered" column since you have that data!
+            // 4. Added Total Answered (since you have the 'questionsAnswered' field)
             const totalQ = data.questionsAnswered || 0;
 
+            // Generate the Row
             const row = `
                 <tr>
-                    <td>${studentEmail}</td>
+                    <td><strong>${studentEmail}</strong></td>
                     <td><span class="status-pill ${rowClass}">${progress}</span></td>
                     <td>${totalQ}</td>
                     <td class="timestamp">${lastPing}</td>
