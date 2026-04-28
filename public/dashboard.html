@@ -9,11 +9,9 @@
         appId: "1:374515847282:web:b052c0c218937fae7432eb"
     };
 
-    // Initialize Firebase only if it hasn't been initialized yet
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
-    
     const db = firebase.firestore();
 
     // --- REAL-TIME LISTENER ---
@@ -24,35 +22,35 @@
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Use the Document Name (the email)
-            const studentEmail = doc.id; 
+            // 1. Use the email field from the data
+            const studentEmail = data.email || doc.id; 
 
-            // Format the Progress
-            let progress = "0";
+            // 2. Use 'lastStep' for more detail (e.g., File 7 - Q4)
+            // Fallback to lastSegmentID if lastStep is missing
+            let progress = data.lastStep || data.lastSegmentID || "Starting...";
             let rowClass = "";
             
-            if (data.lastSegmentID) {
-                progress = data.lastSegmentID.replace('segment-', '').toUpperCase();
-                if (progress === "FINISH") {
-                    progress = "ARCHIVE CLEAR ✅";
-                    rowClass = "complete";
-                } else {
-                    progress = `FILE ${progress} / 10`;
-                }
+            if (progress.includes("finish") || progress.includes("10")) {
+                progress = "ARCHIVE CLEAR ✅";
+                rowClass = "complete";
             }
 
-            // Robust Timestamp formatting
+            // 3. Fix the Timestamp (Using your actual field: 'timestamp')
             let lastPing = "--:--:--";
-            if (data.lastActive) {
-                // Handle Firebase timestamp vs standard JS date
-                const date = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
-                lastPing = date.toLocaleTimeString([], { hour12: false });
+            if (data.timestamp) {
+                // Firebase timestamp objects have a .toDate() method
+                const date = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+                lastPing = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
+
+            // 4. Added a "Total Answered" column since you have that data!
+            const totalQ = data.questionsAnswered || 0;
 
             const row = `
                 <tr>
                     <td>${studentEmail}</td>
                     <td><span class="status-pill ${rowClass}">${progress}</span></td>
+                    <td>${totalQ}</td>
                     <td class="timestamp">${lastPing}</td>
                 </tr>
             `;
